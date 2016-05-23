@@ -196,7 +196,7 @@ void QComputer::getNextCommande()
     {
         stream >> com; // extraction d'un element -> un elem c'est une suite de char sans espace
         // envoyer la commande au controleur
-        if (com!="") controleur->commande(com);
+        if (com!="") controleur->sentCommande(com);
     } while (com!="");
 
     // ligne commande a zero
