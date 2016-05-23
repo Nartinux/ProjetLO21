@@ -194,7 +194,7 @@ void QComputer::getNextCommande()
     QString com;
     do
     {
-        stream >> com; // extraction d'un element -> un elem c'est une suite de char ou un espace ?
+        stream >> com; // extraction d'un element -> un elem c'est une suite de char sans espace
         // envoyer la commande au controleur
         if (com!="") controleur->commande(com);
     } while (com!="");

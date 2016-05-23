@@ -411,7 +411,7 @@ Nombre& Complexe::operator+(Nombre& a)
     }
 
     Entier* a2=dynamic_cast<Entier*>(&a);
-    Reel* a3=dynamic_cast<Reel*>(&a);
+    Reel *a3=dynamic_cast<Reel*>(&a);
     Rationnel* a4=dynamic_cast<Rationnel*>(&a);
     if (a2!=nullptr || a3!=nullptr || a4!=nullptr)
     {
