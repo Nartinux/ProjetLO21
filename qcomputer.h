@@ -54,7 +54,7 @@ class QComputer : public QWidget
     QVBoxLayout* verti1;
     QVBoxLayout* verti2;
     QHBoxLayout* pave;
-    QSignalMapper* mapper; //
+    QSignalMapper* mapper; //collecte des signaux sans arguments et les redistribue avec argument
     Pile* pile;
     Factory* fact;
     Controleur* controleur;

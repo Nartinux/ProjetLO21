@@ -69,9 +69,7 @@ Nombre& Entier::operator/(Nombre& a)
     if(a3!=nullptr){return (a/(*this));}
 
     Entier* a4=dynamic_cast<Entier*>(&a);
-    double r1 = val;
-    double r2 = a4->val;
-    Reel* re=new Reel(r1/r2);
+    Rationnel* re=new Rationnel(*this,*a4);
     return *re;
 }
 

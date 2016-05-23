@@ -117,7 +117,7 @@ bool estUnOperateur(const QString s){
 
 // estUnNombre n'existe plus !!!
 
-void Controleur::commande(const QString& c){
+void Controleur::sentCommande(const QString& c){
     Nombre* n;
     if ((n=facto.Product(c))!=nullptr)
     {
