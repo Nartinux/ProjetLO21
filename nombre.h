@@ -148,8 +148,8 @@ public :
     // ici l'upcast implicite fonctionne si on met direct un entier et un reel par exemple ? a try
     Complexe(Nombre& r,Nombre& i)
     {
-        *re=r;
-        *im=i;
+        re=&r;
+        im=&i;
         simplification();
     }
 

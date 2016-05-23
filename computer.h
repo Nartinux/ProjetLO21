@@ -30,7 +30,7 @@ public:
 class LibMemory 
 {
 public:
-    static void freeMem(Nombre* n){delete n;}
+    static void freeMem(Nombre* n) {delete n;}
 };
 
 

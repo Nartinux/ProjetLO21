@@ -3,68 +3,9 @@
 #include "exception.h"
 
 
-/*
-ExpressionManager::Handler ExpressionManager::handler=ExpressionManager::Handler();
 
 
-ExpressionManager& ExpressionManager::getInstance(){
-    if (handler.instance==nullptr) handler.instance=new ExpressionManager;
-    return *handler.instance;
-}
-
-void ExpressionManager::libererInstance(){
-    delete handler.instance;
-    handler.instance=nullptr;
-}
-*/
-
-
-
-
-/*QString  Expression::toString() const {
-    return QString::number(value);
-}*/
-
-
-/*
-void ExpressionManager::agrandissementCapacite() {
-    Expression** newtab=new Expression*[(nbMax+1)*2];
-    for(unsigned int i=0; i<nb; i++) newtab[i]=exps[i];
-    Expression**  old=exps;
-    exps=newtab;
-    nbMax=(nbMax+1)*2;
-    delete old;
-}
-
-Expression& ExpressionManager::addExpression(int v){
-    if (nb==nbMax) agrandissementCapacite();
-    exps[nb++]=new Expression(v);
-    return *exps[nb-1];
-}
-
-void ExpressionManager::removeExpression(Expression& e){
-    unsigned int i=0;
-    while(i<nb && exps[i]!=&e) i++;
-    if (i==nb) throw ComputerException("elimination d'une Expression inexistante");
-    delete exps[i];
-    i++;
-    while(i<nb) { exps[i-1]=exps[i]; i++; }
-    nb--;
-}
-
-ExpressionManager::~ExpressionManager(){
-    for(unsigned int i=0; i<nb; i++) delete exps[i];
-    delete[] exps;
-}
-
-Expression& Item::getExpression() const {
-        if (exp==nullptr) throw ComputerException("Item : tentative d'acces a une expression inexistante");
-        return *exp;
-}
-
-*/
-
-//----------------- CLASS COMPUTER ---------------------------------
+//----------------- CLASS COMPUTER -----------------------------------------------------------------------------------------------------------------
 
 
 void Pile::push(Nombre &e){
@@ -93,18 +34,6 @@ void Pile::agrandissementCapacite()
 
 
 
-/*
-void Pile::affiche(QTextStream& f) const{
-    f<<"********************************************* \n";
-    f<<"M : "<<message<<"\n";
-    f<<"---------------------------------------------\n";
-    for(int i=nbAffiche; i>0; i--) {
-        if (i<=nb) f<<i<<": "<<exps[nb-i]->toString()<<"\n";
-        else f<<i<<": \n";
-    }
-    f<<"---------------------------------------------\n";
-}
-*/
 
 
 Pile::~Pile(){
@@ -123,7 +52,7 @@ Nombre& Pile::top() const {
 
 
 
-//----------------- CLASS FACTORY ---------------------------------
+//----------------- CLASS FACTORY ------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 Nombre* Factory::Product(const QString s)
@@ -154,6 +83,7 @@ Nombre* Factory::Product(const QString s)
             Complexe* c= new Complexe(*a,*b);
             return &(c->simplification());
         }
+        else throw ComputerException("");
     }
 
     if(((i=s.indexOf('/'))!=-1))
@@ -170,10 +100,9 @@ Nombre* Factory::Product(const QString s)
     }
     else return nullptr;
     // on ne comprend pas les atomes pour l'instant
-    
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------------------
 // a modif !!
 
 bool estUnOperateur(const QString s){
@@ -184,7 +113,7 @@ bool estUnOperateur(const QString s){
     return false;
 }
 
-//----------------- CLASS CONTROLEUR ---------------------------------
+//----------------- CLASS CONTROLEUR -------------------------------------------------------------------------------------------------
 
 // estUnNombre n'existe plus !!!
 
@@ -200,10 +129,10 @@ void Controleur::commande(const QString& c){
         {
             if (expAff.taille()>=2) // a modifier
             {
-                Nombre& v1=expAff.top();
+                Nombre& v2=expAff.top();
                 expAff.pop();
                 // pk ne pas faire les 2 en meme temps ? 
-                Nombre& v2=expAff.top();
+                Nombre& v1=expAff.top();
                 expAff.pop();
                 if (c=="+") {expAff.push(v1+v2); LibMemory::freeMem(&v1); LibMemory::freeMem(&v2);}
                 if (c=="-") {expAff.push(v1-v2); LibMemory::freeMem(&v1); LibMemory::freeMem(&v2);}
@@ -214,8 +143,8 @@ void Controleur::commande(const QString& c){
                     if (ent==nullptr || ent->getInt()!=0) {expAff.push(v1/v2); LibMemory::freeMem(&v1); LibMemory::freeMem(&v2);}
                     else 
                     {
-                        expAff.push(v2);
                         expAff.push(v1);
+                        expAff.push(v2);
                         expAff.setMessage("Erreur : division par zéro");
                     }
                 }
