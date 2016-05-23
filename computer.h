@@ -206,7 +206,7 @@ class Controleur {
     Factory& facto;
     Pile& expAff;
 public:
-    Controleur(Pile& v, Factory& f=Factory()):expAff(v), facto(f){}
+    Controleur(Pile& v, Factory& f):expAff(v), facto(f){}
     void commande(const QString& c);
 
 };
