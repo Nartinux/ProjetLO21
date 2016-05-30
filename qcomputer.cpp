@@ -208,37 +208,36 @@ void QComputer::getNextCommande()
     pile->setMessage("");
 
     //recupration du texte de la ligne de commande
-    QString c = commande->text();
+    QString s = commande->text();
 
-    /*
-    int i=0, j=0;
-    while(i<c.length())
-    {
-        while(c[i]!='\'' && i<c.length()) i++;
-        if(i==c.length()) break;
-        j=i;
-        i++;
-        while(c[i]!='\'' && i<c.length()) i++;
-        if(i!=c.length())
-        {
-            if(j>0) envoiCmd(c.left(j));
-            i++;
-            envoiCmd(c.mid(j,i-j+1));
-        } // sinon c'est qu'on a un pb: 1 seul guillemet -> c'est au product de gerer ca, on le passe en normal
-        else break;
-        if(i==(c.length()-1)) break;
-        QString& s=c.right(c.length()-(i+1));
-        c=s;
-        i=0;
-    }
-    if(i!=(c.length()-1)) envoiCmd(c);
-    */
 
     int i=0;
-    while(c[i]!=' ' && i<c.length())
+    while(i<s.length())
     {
+        while(s[i]!='\'' && i<s.length()) i++;
+        if(i!=s.length())
+        {
+            envoiCmd(s.left(i));
+            s=s.right(s.length()-i);
+            i=0;
+            while(s[i]!='\'' && i<s.length()) i++;
+            if(i!=s.length())
+            {
+                envoiCmd(s.left(i+1));
+                s=s.right(s.length()-(i+1));
+                i=0;
+            }else {envoiCmd(s); break;}
 
+        }else {envoiCmd(s); break;}
     }
+
+
+
+
+    //envoiCmd(s);
+
+
+
 
 
     // ligne commande a zero
