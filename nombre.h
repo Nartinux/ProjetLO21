@@ -6,13 +6,15 @@
 #include <QObject>
 #include <QDebug>
 #include "exception.h"
+#include "objectpile.h"
+
 
 
 
 //---------------------------------------- CLASS NOMBRE ----------------------------------------
 
 
-class Nombre
+class Nombre : public ObjectPile
 {
 public :
     virtual Nombre& operator+(Nombre& a)=0;
@@ -62,20 +64,20 @@ class Rationnel : public Nombre
 {
     Entier* num;
     Entier* den;
-    Nombre& simplification();
+    void simplificationConstruct();
     friend class Factory;
     friend class Entier;
     friend class Reel;
     friend class Complexe;
 public :
-
+    Nombre& simplificationExt();
     //constructeur
     Rationnel(Entier& n, Entier& d)
     {
         if (d.val==0) {throw ComputerException("le denominateur ne peut etre nul !");}
         num=&n;
         den=&d;
-        simplification();
+        simplificationConstruct();
     }
     //destructeur
     ~Rationnel()
@@ -110,10 +112,7 @@ class Reel : public Nombre
     Nombre& simplification();
 public :
     //constructeur
-    Reel(double a): val(a)
-    {
-        
-    }
+    Reel(double a): val(a){}
 
     //destructeur
     ~Reel();
@@ -137,7 +136,6 @@ class Complexe : public Nombre
 {
     Nombre* re;
     Nombre* im;
-    Nombre& simplification();
     friend class Factory;
     friend class Rationnel;
     friend class Reel;
@@ -150,11 +148,13 @@ public :
     {
         re=&r;
         im=&i;
-        simplification();
     }
 
     //destructeur
     ~Complexe();
+
+    //simplificateur
+    Nombre& simplification();
 
     //getters 
     Nombre& getRe()const {return *re;}

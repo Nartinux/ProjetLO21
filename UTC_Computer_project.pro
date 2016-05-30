@@ -4,10 +4,17 @@ SOURCES += \
     main.cpp \
     computer.cpp \
     nombre.cpp \
-    qcomputer.cpp
+    qcomputer.cpp \
+    objectpile.cpp \
+    factory.cpp \
+    verifregex.cpp
 
 HEADERS += \
     computer.h \
     exception.h \
     nombre.h \
-    qcomputer.h
+    qcomputer.h \
+    objectpile.h \
+    factory.h \
+    verifregex.h \
+    operation.h

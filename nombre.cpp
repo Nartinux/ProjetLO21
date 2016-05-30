@@ -7,18 +7,18 @@ Reel::~Reel(){};
 
 // ------------ CLASS ENTIER -----------------------------------
 
-// pas besoin de liberer "manuellement"  la memoire pour ces methdes car ce sera fait a l'xterieur dans la methode commande de controleur.
+// pas besoin de liberer "manuellement"  la memoire pour ces methodes car ce sera fait a l'exterieur dans la methode commande de controleur.
 
 Nombre& Entier::operator+(Nombre& a)
 {
     Rationnel* a1=dynamic_cast<Rationnel*>(&a);
-    if(a1!=nullptr){return (a+(*this));}
+    if(a1!=nullptr){return (a1->operator +(*this));}
 
     Complexe* a2=dynamic_cast<Complexe*>(&a);
-    if(a2!=nullptr){return (a+(*this));}
+    if(a2!=nullptr){return (a2->operator +(*this));}
 
     Reel* a3=dynamic_cast<Reel*>(&a);
-    if(a3!=nullptr){return (a+(*this));}
+    if(a3!=nullptr){return (a3->operator +(*this));}
 
     Entier* a4=dynamic_cast<Entier*>(&a);
     Entier* ent=new Entier(val+a4->val);
@@ -28,13 +28,13 @@ Nombre& Entier::operator+(Nombre& a)
 Nombre& Entier::operator-(Nombre& a)
 {
     Rationnel* a1=dynamic_cast<Rationnel*>(&a);
-    if(a1!=nullptr){return (a-(*this));}
+    if(a1!=nullptr){return (a1->operator-(*this));}
 
     Complexe* a2=dynamic_cast<Complexe*>(&a);
-    if(a2!=nullptr){return (a-(*this));}
+    if(a2!=nullptr){return (a2->operator-(*this));}
 
     Reel* a3=dynamic_cast<Reel*>(&a);
-    if(a3!=nullptr){return (a-(*this));}
+    if(a3!=nullptr){return (a3->operator-(*this));}
 
     Entier* a4=dynamic_cast<Entier*>(&a);
     Entier* ent=new Entier(val-a4->val);
@@ -44,13 +44,13 @@ Nombre& Entier::operator-(Nombre& a)
 Nombre& Entier::operator*(Nombre& a)
 {
     Rationnel* a1=dynamic_cast<Rationnel*>(&a);
-    if(a1!=nullptr){return (a*(*this));}
+    if(a1!=nullptr){return (a1->operator *(*this));}
 
     Complexe* a2=dynamic_cast<Complexe*>(&a);
-    if(a2!=nullptr){return (a*(*this));}
+    if(a2!=nullptr){return (a2->operator *(*this));}
 
     Reel* a3=dynamic_cast<Reel*>(&a);
-    if(a3!=nullptr){return (a*(*this));}
+    if(a3!=nullptr){return (a3->operator *(*this));}
 
     Entier* a4=dynamic_cast<Entier*>(&a);
     Entier* ent=new Entier(val*a4->val);
@@ -60,13 +60,13 @@ Nombre& Entier::operator*(Nombre& a)
 Nombre& Entier::operator/(Nombre& a)
 {
     Rationnel* a1=dynamic_cast<Rationnel*>(&a);
-    if(a1!=nullptr){return (a/(*this));}
+    if(a1!=nullptr){return (a1->operator /(*this));}
 
     Complexe* a2=dynamic_cast<Complexe*>(&a);
-    if(a2!=nullptr){return (a/(*this));}
+    if(a2!=nullptr){return (a2->operator /(*this));}
 
     Reel* a3=dynamic_cast<Reel*>(&a);
-    if(a3!=nullptr){return (a/(*this));}
+    if(a3!=nullptr){return (a3->operator /(*this));}
 
     Entier* a4=dynamic_cast<Entier*>(&a);
     Rationnel* re=new Rationnel(*this,*a4);
@@ -87,7 +87,7 @@ QString Entier::toString()const
 
 // ----------------------- CLASS RATIONNEL ------------------------------------------------------------------------------------------------------
 
-Nombre& Rationnel::simplification()
+void Rationnel::simplificationConstruct()
 {
 
     //algo d'euclide
@@ -102,10 +102,14 @@ Nombre& Rationnel::simplification()
     den->val/=a;
     if(den->val<0){den->val=-(den->val); num->val=-(num->val);}
 
+}
 
+
+Nombre& Rationnel::simplificationExt()      //comment on detruit l'obj si on en cree un new ? -> regarder si ratonnel ou ent et...en sortie le butter! (dans controleur)
+{
     if (den->val==1){Entier* ent=new Entier(num->val); return *ent;}
-    if (num->val==0){Entier* ent=new Entier(0); return *ent;}
-    return *this;
+    else if (num->val==0){Entier* ent=new Entier(0); return *ent;}
+    else return *this;
 }
 
 
@@ -121,7 +125,7 @@ Nombre& Rationnel::operator+(Nombre& a) // ent1,ent2, r // on ne détruit pas le
         Rationnel* r=new Rationnel(ent3,ent4);                             // allocation r
         LibMemory::freeMem(&ent1);           // liberation memoire des obj cree en interne
         LibMemory::freeMem(&ent2);
-        return *r;
+        return r->simplificationExt();
     }
 
     Complexe* a2=dynamic_cast<Complexe*>(&a);
@@ -135,7 +139,7 @@ Nombre& Rationnel::operator+(Nombre& a) // ent1,ent2, r // on ne détruit pas le
         Entier& ent6=dynamic_cast<Entier&>(num->operator+(ent5));
         Rationnel* r= new Rationnel(ent6,(*den));
         LibMemory::freeMem(&ent5);
-        return *r;
+        return r->simplificationExt();
     }
 
     Reel* a4=dynamic_cast<Reel*>(&a);
@@ -161,7 +165,7 @@ Nombre& Rationnel::operator-(Nombre& a)
         Rationnel* r=new Rationnel(ent3,ent4);
         LibMemory::freeMem(&ent1);           // liberation memoire des obj cree en interne
         LibMemory::freeMem(&ent2);
-        return *r;
+        return r->simplificationExt();
     }
 
     Complexe* a2=dynamic_cast<Complexe*>(&a);
@@ -174,7 +178,7 @@ Nombre& Rationnel::operator-(Nombre& a)
         Entier& ent6=dynamic_cast<Entier&>(num->operator-(ent5));
         Rationnel* r= new Rationnel(ent6,(*den));
         LibMemory::freeMem(&ent5);
-        return *r;
+        return r->simplificationExt();
     }
 
     Reel* a4=dynamic_cast<Reel*>(&a);
@@ -197,7 +201,7 @@ Nombre& Rationnel::operator*(Nombre& a)
         Entier& ent1=dynamic_cast<Entier&>(num->operator *(*(a1->num)));
         Entier& ent2=dynamic_cast<Entier&>(den->operator *(*(a1->den)));
         Rationnel* r=new Rationnel(ent1,ent2);
-        return *r;
+        return r->simplificationExt();
     }
 
     Complexe* a2=dynamic_cast<Complexe*>(&a);
@@ -208,7 +212,7 @@ Nombre& Rationnel::operator*(Nombre& a)
     {
         Entier& ent3=dynamic_cast<Entier&>(num->operator*(*a3));
         Rationnel* r= new Rationnel(ent3,(*den));
-        return *r;
+        return r->simplificationExt();
     }
 
     Reel* a4=dynamic_cast<Reel*>(&a);
@@ -230,7 +234,7 @@ Nombre& Rationnel::operator/(Nombre& a)
         Entier& ent1=dynamic_cast<Entier&>(num->operator *(*(a1->den)));
         Entier& ent2=dynamic_cast<Entier&>(den->operator*(*(a1->num)));
         Rationnel* r= new Rationnel(ent1,ent2);
-        return *r;
+        return r->simplificationExt();
     }
     Complexe* a2=dynamic_cast<Complexe*>(&a);
     if(a2!=nullptr)return (a2->operator /(*this));
@@ -240,7 +244,7 @@ Nombre& Rationnel::operator/(Nombre& a)
     {
         Entier& ent3=dynamic_cast<Entier&>(den->operator*(*a3));
         Rationnel* r= new Rationnel(*num,ent3);
-        return *r;
+        return r->simplificationExt();
     }
 
     Reel* a4=dynamic_cast<Reel*>(&a);
@@ -286,10 +290,10 @@ Nombre& Reel::simplification()
 Nombre& Reel::operator+(Nombre& a)
 {
     Rationnel* a1=dynamic_cast<Rationnel*>(&a);
-    if(a1!=nullptr){return (a+(*this));}
+    if(a1!=nullptr){return (a1->operator +(*this));}
 
     Complexe* a2=dynamic_cast<Complexe*>(&a);
-    if(a2!=nullptr){return (a+(*this));}
+    if(a2!=nullptr){return (a2->operator +(*this));}
 
     Entier* a3=dynamic_cast<Entier*>(&a);
     if(a3!=nullptr)
@@ -306,10 +310,10 @@ Nombre& Reel::operator+(Nombre& a)
 Nombre& Reel::operator-(Nombre& a)
 {
     Rationnel* a1=dynamic_cast<Rationnel*>(&a);
-    if(a1!=nullptr){return (a-(*this));}
+    if(a1!=nullptr){return (a1->operator -(*this));}
 
     Complexe* a2=dynamic_cast<Complexe*>(&a);
-    if(a2!=nullptr){return (a-(*this));}
+    if(a2!=nullptr){return (a2->operator -(*this));}
 
     Entier* a3=dynamic_cast<Entier*>(&a);
     if(a3!=nullptr)
@@ -325,10 +329,10 @@ Nombre& Reel::operator-(Nombre& a)
 Nombre& Reel::operator*(Nombre& a)
 {
     Rationnel* a1=dynamic_cast<Rationnel*>(&a);
-    if(a1!=nullptr){return (a*(*this));}
+    if(a1!=nullptr){return (a1->operator *(*this));}
 
     Complexe* a2=dynamic_cast<Complexe*>(&a);
-    if(a2!=nullptr){return (a*(*this));}
+    if(a2!=nullptr){return (a2->operator *(*this));}
 
     Entier* a3=dynamic_cast<Entier*>(&a);
     if(a3!=nullptr)
@@ -344,10 +348,10 @@ Nombre& Reel::operator*(Nombre& a)
 Nombre& Reel::operator/(Nombre& a)
 {
     Rationnel* a1=dynamic_cast<Rationnel*>(&a);
-    if(a1!=nullptr){return (a/(*this));}
+    if(a1!=nullptr){return (a1->operator /(*this));}
 
     Complexe* a2=dynamic_cast<Complexe*>(&a);
-    if(a2!=nullptr){return (a/(*this));}
+    if(a2!=nullptr){return (a2->operator /(*this));}
 
     Entier* a3=dynamic_cast<Entier*>(&a);
     if(a3!=nullptr)
@@ -411,9 +415,10 @@ Nombre& Complexe::operator+(Nombre& a)
     Entier* a2=dynamic_cast<Entier*>(&a);
     Reel *a3=dynamic_cast<Reel*>(&a);
     Rationnel* a4=dynamic_cast<Rationnel*>(&a);
+    Nombre* a5=dynamic_cast<Nombre*>(&a);
     if (a2!=nullptr || a3!=nullptr || a4!=nullptr)
     {
-        Complexe* c= new Complexe((a.operator +(*re)),(*im));
+        Complexe* c= new Complexe((a5->operator +(*re)),(*im));
         return c->simplification();
     }
     throw ComputerException("type inconnu");
@@ -431,9 +436,10 @@ Nombre& Complexe::operator-(Nombre& a)
     Entier* a2=dynamic_cast<Entier*>(&a);
     Reel* a3=dynamic_cast<Reel*>(&a);
     Rationnel* a4=dynamic_cast<Rationnel*>(&a);
+    Nombre* a5=dynamic_cast<Nombre*>(&a);
     if (a2!=nullptr || a3!=nullptr || a4!=nullptr)
     {
-        Complexe* c= new Complexe((a.operator -(*re)),(*im));
+        Complexe* c= new Complexe((a5->operator -(*re)),(*im));
         return c->simplification();
     }
     throw ComputerException("type inconnu");
@@ -460,16 +466,17 @@ Nombre& Complexe::operator*(Nombre& a)
 
 
         Complexe* c= new Complexe(nb3, nb4);
-        return *c;
+        return c->simplification();
     }
 
     Entier& a2=dynamic_cast<Entier&>(a);
     Reel& a3=dynamic_cast<Reel&>(a);
     Rationnel& a4=dynamic_cast<Rationnel&>(a);
+    Nombre* a5=dynamic_cast<Nombre*>(&a);
     if (&a2!=nullptr || &a3!=nullptr || &a4!=nullptr)
     {
-        Complexe* c= new Complexe((a.operator*(*re)),(a.operator*(*im)));
-        return *c;
+        Complexe* c= new Complexe((a5->operator*(*re)),(a5->operator*(*im)));
+        return c->simplification();
     }
     throw ComputerException("type inconnu");
 
@@ -507,16 +514,17 @@ Nombre& Complexe::operator/(Nombre& a)
         LibMemory::freeMem(&nb4);
 
         Complexe* c= new Complexe(nb5, nb6);
-        return *c;
+        return c->simplification();
     }
 
     Entier& a2=dynamic_cast<Entier&>(a);
     Reel& a3=dynamic_cast<Reel&>(a);
     Rationnel& a4=dynamic_cast<Rationnel&>(a);
+    Nombre* a5=dynamic_cast<Nombre*>(&a);
     if (&a2!=nullptr || &a3!=nullptr || &a4!=nullptr)
     {
-        Complexe* c= new Complexe((a.operator /(*re)),(a.operator /(*im)));
-        return *c;
+        Complexe* c= new Complexe((a5->operator /(*re)),(a5->operator /(*im)));
+        return c->simplification();
     }
     throw ComputerException("type inconnu");
 }

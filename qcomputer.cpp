@@ -4,8 +4,13 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
 {
     //creer les objets
     pile = new Pile();
-    fact = new Factory();
-    controleur=new Controleur(/*ExpressionManager::getInstance(),*/*pile,*fact); //ici !!!
+    factg = &FactoryG::getInstance();
+    facta = &FactoryA::getInstance();
+    factp = &FactoryP::getInstance();
+    facte = &FactoryE::getInstance();
+    factn = &FactoryN::getInstance();
+    vrx= new VerifRegex();
+    controleur=new Controleur(*pile, *vrx, *factg, *facta, *factp, *facte, *factn); 
     message=new QLineEdit(this);
     vuePile=new QTableWidget(pile->getNbItemsToAffiche(),1,this);
     commande = new QLineEditable(this);
@@ -127,7 +132,7 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     vuePile->verticalHeader()->setStyleSheet("color: black");
 
     // donne la bonne apparence a vuePile
-    vuePile->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    vuePile->setEditTriggers(QAbstractItemView::NoEditTriggers);    //decrit la fancon d'écrire dans l'item (ici le QTableWidget) ici on peut pas ecrire dedans (manuellement)
     vuePile->horizontalHeader()->setVisible(false);
     vuePile->horizontalHeader()->setStretchLastSection(true);
 
@@ -180,7 +185,23 @@ void QComputer::refresh()
 		vuePile->item(pile->getNbItemsToAffiche()-1-nb,0)->setText((*it).toString());
 }
 
-
+void QComputer::envoiCmd(QString& s)
+{
+    // si c'est une expression on ne check pas si y'a des espaces, ca sera fait apres !
+    if(s[0]=='\'' && s[s.length()-1]=='\'') controleur->sentCommande(s); // donc on envoi tout
+    else
+    {
+        // extraction de chaque élément de la ligne
+        QTextStream stream(&s);
+        QString com;
+        do
+        {
+            stream >> com; // extraction d'un element -> un elem c'est une suite de char sans espace
+            // envoyer la commande au controleur
+            if (com!="") controleur->sentCommande(com);
+        } while (com!="");
+    }
+}
 
 void QComputer::getNextCommande()
 {
@@ -189,15 +210,36 @@ void QComputer::getNextCommande()
     //recupration du texte de la ligne de commande
     QString c = commande->text();
 
-    // extraction de chaque élément de la ligne
-    QTextStream stream(&c);
-    QString com;
-    do
+    /*
+    int i=0, j=0;
+    while(i<c.length())
     {
-        stream >> com; // extraction d'un element -> un elem c'est une suite de char sans espace
-        // envoyer la commande au controleur
-        if (com!="") controleur->sentCommande(com);
-    } while (com!="");
+        while(c[i]!='\'' && i<c.length()) i++;
+        if(i==c.length()) break;
+        j=i;
+        i++;
+        while(c[i]!='\'' && i<c.length()) i++;
+        if(i!=c.length())
+        {
+            if(j>0) envoiCmd(c.left(j));
+            i++;
+            envoiCmd(c.mid(j,i-j+1));
+        } // sinon c'est qu'on a un pb: 1 seul guillemet -> c'est au product de gerer ca, on le passe en normal
+        else break;
+        if(i==(c.length()-1)) break;
+        QString& s=c.right(c.length()-(i+1));
+        c=s;
+        i=0;
+    }
+    if(i!=(c.length()-1)) envoiCmd(c);
+    */
+
+    int i=0;
+    while(c[i]!=' ' && i<c.length())
+    {
+
+    }
+
 
     // ligne commande a zero
     commande->clear();

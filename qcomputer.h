@@ -17,7 +17,7 @@
 
 
 
-class QLineEditable : public QLineEdit{     //QlineEditable est un QlineEdit avec un slot "addtext" en plus pour permettre le pavé virtuel d'écrire dedans
+class QLineEditable : public QLineEdit{     //QlineEditable est un QlineEdit avec un slot "addtext" en plus pour permettre au pavé virtuel d'écrire dedans
     Q_OBJECT
 public:
     QLineEditable(QWidget *parent = Q_NULLPTR) : QLineEdit(parent){}
@@ -56,12 +56,18 @@ class QComputer : public QWidget
     QHBoxLayout* pave;
     QSignalMapper* mapper; //collecte des signaux sans arguments et les redistribue avec argument
     Pile* pile;
-    Factory* fact;
+    FactoryG* factg;
+    FactoryA* facta;
+    FactoryP* factp;
+    FactoryE* facte;
+    FactoryN* factn;
+    VerifRegex* vrx;
     Controleur* controleur;
 
 public:
     explicit QComputer(QWidget *parent = 0);
 public slots:
+    void envoiCmd(QString& s);
     void refresh();
     void getNextCommande();
 };
