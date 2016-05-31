@@ -53,18 +53,23 @@ ObjectPile& Pile::top() const {
 
 void Controleur::sentCommande(/*const */QString& s)
 {
+//expAff.setMessage(s);/*
     ObjectPile* op=nullptr;
     if ((op=factoG.Product(s))!=nullptr)
     {
+
+
         expAff.push(*op);
         Expression* a1=dynamic_cast<Expression*>(op);
         Nombre* a2=dynamic_cast<Nombre*>(op);
         Programme* a3=dynamic_cast<Programme*>(op);
         Atome* a4=dynamic_cast<Atome*>(op);
+        expAff.setMessage(s);
         if(a1!=nullptr) expAff.setMessage("c'est une expression");
         if(a2!=nullptr) expAff.setMessage("c'est un nb");
         if(a3!=nullptr) expAff.setMessage("c'est un un progr");
         if(a4!=nullptr) expAff.setMessage("c'est un atome");
+        
     }
     else
     {

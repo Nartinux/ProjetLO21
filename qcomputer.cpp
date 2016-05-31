@@ -211,6 +211,32 @@ void QComputer::getNextCommande()
     QString s = commande->text();
 
 
+
+    int i=0;
+    while(i<s.length())
+    {
+        while(s[i]!='\'' && i<s.length()) i++;
+        if(i!=s.length())
+        {
+            envoiCmd(s.left(i));        // pas sur !
+            s=s.right(s.length()-i);
+            i=1;
+            while(s[i]!='\'' && i<s.length()) i++;
+            if(i!=s.length())
+            {
+                envoiCmd(s.left(i+1));
+                s=s.right(s.length()-(i+1));
+                i=0;
+            }else {envoiCmd(s); break;}
+
+        }else {envoiCmd(s); break;}
+    }
+
+
+
+
+
+/*
     int i=0;
     while(i<s.length())
     {
@@ -231,7 +257,7 @@ void QComputer::getNextCommande()
         }else {envoiCmd(s); break;}
     }
 
-
+*/
 
 
     //envoiCmd(s);

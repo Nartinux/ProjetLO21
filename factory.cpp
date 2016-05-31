@@ -29,7 +29,7 @@ ObjectPile* FactoryG::Product (QString& s) // besoin de check ici si c'est un op
     int i;
     if (s[0]=='\'' && s[s.length()-1]=='\'') // DANS UNE EXPRESSION ON NE GERE PAS LES MULTIPLICATIONS IMPLICITES tq: 4(32+4) ou 7SIN(8)
     {
-        while ((i=s.indexOf(" "))!=-1) {s.remove(i,i); i++;} // on retire tous les espaces
+        while ((i=s.indexOf(" "))!=-1) {s.remove(i,1); i++;} // on retire tous les espaces
         i=1;
         while (i<(s.length()-2)) // length -2 pour ne pas a vaoir a gerer des cas comme '44+7-' qui est illégale sinon on lance un traitement pour le - à la fin qui va echouer.
         {
@@ -58,7 +58,7 @@ ObjectPile* FactoryG::Product (QString& s) // besoin de check ici si c'est un op
 
     if (s[0]=='[' && s[s.length()-1]==']')
     {
-        while ((i=s.indexOf(" "))!=-1) s.remove(i,i); // on retire tous les espaces
+        while ((i=s.indexOf(" "))!=-1) s.remove(i,1); // on retire tous les espaces
         /*if(vrx.verifProgramme(s)) return fE.ProductP(s); else*/ return nullptr;
     }
 
