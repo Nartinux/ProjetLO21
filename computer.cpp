@@ -69,7 +69,7 @@ void Controleur::sentCommande(/*const */QString& s)
         if(a2!=nullptr) expAff.setMessage("c'est un nb");
         if(a3!=nullptr) expAff.setMessage("c'est un un progr");
         if(a4!=nullptr) expAff.setMessage("c'est un atome");
-        
+
     }
     else
     {
@@ -91,12 +91,43 @@ void Controleur::sentCommande(/*const */QString& s)
                     if (s=="/") 
                     {   
                         Entier* ent=dynamic_cast<Entier*>(a2);
-                        if (ent==nullptr || ent->getInt()!=0) {expAff.push(a1->operator/(*a2)); LibMemory::freeMem(a1); LibMemory::freeMem(a2);}
+                        if (ent==nullptr || ent->getInt()!=0) {
+                            expAff.push(a1->operator/(*a2)); /*LibMemory::freeMem(a1); LibMemory::freeMem(a2);*/
+                            expAff.setMessage("Construction d'un rationnel avec 2 entiers");
+                        }
                         else 
                         {
                             expAff.push(*a1);
                             expAff.push(*a2);
                             expAff.setMessage("Erreur : division par zéro");
+                        }
+                    }
+                    if (s=="$") {expAff.push(a1->operator$(*a2)); //LibMemory::freeMem(&v1); LibMemory::freeMem(&v2);
+                    }
+                    if (s=="MOD") {
+                        Entier* ent1=dynamic_cast<Entier*>(a1);
+                        Entier* ent2=dynamic_cast<Entier*>(a2);
+                        if (ent1!=nullptr && ent2!=nullptr){
+                            expAff.push(modulo(*ent1,*ent2)); //LibMemory::freeMem(&v1); LibMemory::freeMem(&v2);
+                        }
+                        else
+                        {
+                            expAff.push(*a1);
+                            expAff.push(*a2);
+                            expAff.setMessage("Erreur : Le modulo de la division n'est défini que sur des entiers");
+                        }
+                    }
+                    if (s=="DIV") {
+                        Entier* ent1=dynamic_cast<Entier*>(a1);
+                        Entier* ent2=dynamic_cast<Entier*>(a2);
+                        if (ent1!=nullptr && ent2!=nullptr){
+                            expAff.push(diveucli(*ent1,*ent2)); //LibMemory::freeMem(&v1); LibMemory::freeMem(&v2);
+                        }
+                        else
+                        {
+                            expAff.push(*a1);
+                            expAff.push(*a2);
+                            expAff.setMessage("Erreur : La division euclidienne n'est défini que sur des entiers");
                         }
                     }
                 }

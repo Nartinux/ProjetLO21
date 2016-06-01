@@ -56,6 +56,9 @@ bool VerifRegex::verifOperateurSimple(QString s)
     if (s=="-") return true;
     if (s=="*") return true;
     if (s=="/") return true;
+    if (s=="$") return true;
+    if (s=="MOD") return true;
+    if (s=="DIV") return true;
     return false;
 }
 
@@ -65,6 +68,7 @@ bool VerifRegex::verifOperateurSimple(const QChar& c)
     if (c=='-') return true;
     if (c=='*') return true;
     if (c=='/') return true;
+    if (c=='$') return true;
     return false;
 }
 // verifier que soit un nb est avant ou apres soit dans le cas de moins... soit que y'a un espace avant et apres

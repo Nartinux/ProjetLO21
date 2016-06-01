@@ -2,7 +2,7 @@
 #define FACTORY_H
 
 #include "verifregex.h"
-#include "nombre.h"
+#include "operation.h"
 
 
 // ------------------------------------------------------ CLASS FACTORYA ------------------------------------------------------------------------

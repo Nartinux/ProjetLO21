@@ -97,6 +97,8 @@ void FactoryA::libereInstance()
 
 Atome* FactoryA::ProductA(QString s)
 {
+    VerifRegex *vrx = new VerifRegex();
+    if (vrx->verifOperateurSimple(s)) return nullptr; //Pour pas qu'un operateur comme "DIV", "MOD".. soient considérés comme des atomes
     Atome* at=new Atome(s);
     // comment faire pour lui affecter la valeur ? ici ou dans le controleur ? ou ailleurs ?
     Atm.addAtome(*at);
