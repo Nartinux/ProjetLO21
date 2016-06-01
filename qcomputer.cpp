@@ -32,6 +32,18 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     butAdd= new QPushButton("+", this);
     butDiv= new QPushButton("/", this);
     butSub= new QPushButton("-", this);
+    butDivEnt= new QPushButton("DIV", this);
+    butMod= new QPushButton("MOD", this);
+    butPow= new QPushButton("POW", this);
+    butNeg= new QPushButton("NEG", this);
+    butSin= new QPushButton("SIN", this);
+    butCos= new QPushButton("COS", this);
+    butTan= new QPushButton("TAN", this);
+    butNum= new QPushButton("NUM", this);
+    butDen= new QPushButton("DEN", this);
+    but$  = new QPushButton("$", this);
+    butRe = new QPushButton("RE", this);
+    butIm= new QPushButton("IM", this);
     submit= new QPushButton("Enter",this);
 
     but0->setCursor(Qt::PointingHandCursor);
@@ -49,11 +61,16 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     butDiv->setCursor(Qt::PointingHandCursor);
     butSub->setCursor(Qt::PointingHandCursor);
 
-    hori1= new QHBoxLayout;
-    hori2= new QHBoxLayout;
-    hori3= new QHBoxLayout;
+    hori1 = new QHBoxLayout;
+    hori2 = new QHBoxLayout;
+    hori3 = new QHBoxLayout;
+    hori4 = new QHBoxLayout;
+    hori5 = new QHBoxLayout;
+    hori6 = new QHBoxLayout;
+    hori7 = new QHBoxLayout;
     verti1= new QVBoxLayout;
     verti2= new QVBoxLayout;
+    verti3= new QVBoxLayout;
     pave= new QHBoxLayout;
 
     hori1->addWidget(but1);
@@ -65,6 +82,18 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     hori3->addWidget(but7);
     hori3->addWidget(but8);
     hori3->addWidget(but9);
+    hori4->addWidget(butDivEnt);
+    hori4->addWidget(butMod);
+    hori4->addWidget(butPow);
+    hori5->addWidget(butTan);
+    hori5->addWidget(butSin);
+    hori5->addWidget(butCos);
+    hori6->addWidget(butNeg);
+    hori6->addWidget(butNum);
+    hori6->addWidget(butDen);
+    hori7->addWidget(but$);
+    hori7->addWidget(butRe);
+    hori7->addWidget(butIm);
     verti1->addLayout(hori1);
     verti1->addLayout(hori2);
     verti1->addLayout(hori3);
@@ -73,8 +102,13 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     verti2->addWidget(butSub);
     verti2->addWidget(butMult);
     verti2->addWidget(butDiv);
+    verti3->addLayout(hori4);
+    verti3->addLayout(hori5);
+    verti3->addLayout(hori6);
+    verti3->addLayout(hori7);
     pave->addLayout(verti1);
     pave->addLayout(verti2);
+    pave->addLayout(verti3);
 
 
     // positionner les objets sur la fenetre
@@ -118,6 +152,10 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     mapper->setMapping(butMult, "*");
     connect(butDiv, SIGNAL(clicked()), mapper, SLOT(map()));
     mapper->setMapping(butDiv, "/");
+    connect(butMod, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butMod, "MOD");
+    connect(butDivEnt, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butDivEnt, "DIV");
 
     connect(submit, SIGNAL(clicked()),this,SLOT(getNextCommande()));
 
@@ -185,7 +223,7 @@ void QComputer::refresh()
 		vuePile->item(pile->getNbItemsToAffiche()-1-nb,0)->setText((*it).toString());
 }
 
-void QComputer::envoiCmd(QString& s)
+void QComputer::envoiCmd(QString s)
 {
     // si c'est une expression on ne check pas si y'a des espaces, ca sera fait apres !
     if(s[0]=='\'' && s[s.length()-1]=='\'') controleur->sentCommande(s); // donc on envoi tout

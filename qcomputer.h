@@ -46,13 +46,29 @@ class QComputer : public QWidget
     QPushButton* butAdd;
     QPushButton* butDiv;
     QPushButton* butSub;
+    QPushButton* butDivEnt;
+    QPushButton* butMod;
+    QPushButton* butPow;
+    QPushButton* butNeg;
+    QPushButton* butSin;
+    QPushButton* butCos;
+    QPushButton* butTan;
+    QPushButton* butNum;
+    QPushButton* butDen;
+    QPushButton* but$;
+    QPushButton* butRe;
+    QPushButton* butIm;
     QPushButton* submit;
     QHBoxLayout* hori1;
     QHBoxLayout* hori2;
     QHBoxLayout* hori3;
     QHBoxLayout* hori4;
+    QHBoxLayout* hori5;
+    QHBoxLayout* hori6;
+    QHBoxLayout* hori7;
     QVBoxLayout* verti1;
     QVBoxLayout* verti2;
+    QVBoxLayout* verti3;
     QHBoxLayout* pave;
     QSignalMapper* mapper; //collecte des signaux sans arguments et les redistribue avec argument
     Pile* pile;
@@ -67,7 +83,7 @@ class QComputer : public QWidget
 public:
     explicit QComputer(QWidget *parent = 0);
 public slots:
-    void envoiCmd(QString& s);
+    void envoiCmd(QString s);
     void refresh();
     void getNextCommande();
 };
