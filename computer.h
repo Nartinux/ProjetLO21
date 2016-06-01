@@ -5,8 +5,6 @@
 #include <QTextStream>
 #include <QObject>
 #include <QDebug>
-#include "exception.h"
-#include "nombre.h"
 #include "factory.h"
 
 

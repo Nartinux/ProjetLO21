@@ -9,6 +9,12 @@ Reel::~Reel(){};
 
 // pas besoin de liberer "manuellement"  la memoire pour ces methodes car ce sera fait a l'exterieur dans la methode commande de controleur.
 
+Nombre& Nombre::operator$(Nombre& a){
+    Complexe* c = new Complexe(*this, a);
+    //c->simplification(); a remettre après changement du constructeur de complexe
+    return *c;
+}
+
 Nombre& Entier::operator+(Nombre& a)
 {
     Rationnel* a1=dynamic_cast<Rationnel*>(&a);

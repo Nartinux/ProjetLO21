@@ -7,7 +7,8 @@ SOURCES += \
     qcomputer.cpp \
     objectpile.cpp \
     factory.cpp \
-    verifregex.cpp
+    verifregex.cpp \
+    operation.cpp
 
 HEADERS += \
     computer.h \

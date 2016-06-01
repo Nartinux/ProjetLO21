@@ -5,7 +5,6 @@
 #include <QTextStream>
 #include <QObject>
 #include <QDebug>
-#include "exception.h"
 #include "objectpile.h"
 
 
@@ -21,6 +20,7 @@ public :
     virtual Nombre& operator-(Nombre& a)=0;
     virtual Nombre& operator*(Nombre& a)=0;
     virtual Nombre& operator/(Nombre& a)=0;
+    Nombre& operator$(Nombre& a);
     virtual Nombre& neg()=0;
     virtual QString toString()const=0;
     virtual ~Nombre();
