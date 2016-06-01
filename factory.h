@@ -29,7 +29,7 @@ public:
     static FactoryA& getInstance();
     static void libereInstance();
 
-    Atome* ProductA(QString& s);
+    Atome* ProductA(QString s);
     AtomeManager& getAtm() {return Atm;}
 };
 
@@ -55,7 +55,7 @@ public:
     static FactoryN& getInstance();
     static void libereInstance();
 
-    Nombre* ProductN(QString& s);
+    Nombre* ProductN(QString s);
 };
 
 
@@ -81,7 +81,7 @@ public:
     static FactoryE& getInstance();
     static void libereInstance();
 
-    Expression* ProductE(QString& s);
+    Expression* ProductE(QString s);
 };
 
 // ------------------------------------------------------ CLASS FACTORYP ------------------------------------------------------------------------
@@ -104,7 +104,7 @@ public:
     static FactoryP& getInstance();
     static void libereInstance();
 
-    Programme* ProductP(QString& s);
+    Programme* ProductP(QString s);
 };
 
 
@@ -142,7 +142,7 @@ public:
     static void libereInstance();
 
 
-    ObjectPile* Product(QString& s);
+    ObjectPile* Product(QString s);
 };
 
 

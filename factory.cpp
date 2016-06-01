@@ -24,7 +24,7 @@ void FactoryG::libereInstance()
 }
 
 
-ObjectPile* FactoryG::Product (QString& s) // besoin de check ici si c'est un opérateur ? a voir avec le controleur
+ObjectPile* FactoryG::Product (QString s) // besoin de check ici si c'est un opérateur ? a voir avec le controleur
 {
     int i;
     if (s[0]=='\'' && s[s.length()-1]=='\'') // DANS UNE EXPRESSION ON NE GERE PAS LES MULTIPLICATIONS IMPLICITES tq: 4(32+4) ou 7SIN(8)
@@ -94,7 +94,7 @@ void FactoryA::libereInstance()
 }
 
 
-Atome* FactoryA::ProductA(QString& s)
+Atome* FactoryA::ProductA(QString s)
 {
     Atome* at=new Atome(s);
     // comment faire pour lui affecter la valeur ? ici ou dans le controleur ? ou ailleurs ?
@@ -126,7 +126,7 @@ void FactoryN::libereInstance()
 
 
 
-Nombre* FactoryN::ProductN(QString& s)
+Nombre* FactoryN::ProductN(QString s)
 {
     int i;
     bool ok=false;
@@ -194,7 +194,7 @@ void FactoryE::libereInstance()
 }
 
 
-Expression* FactoryE::ProductE (QString& s)
+Expression* FactoryE::ProductE (QString s)
 {
     return new Expression(s);
 }
@@ -222,7 +222,7 @@ void FactoryP::libereInstance()
     handler.instance=nullptr;
 }
 
-Programme* FactoryP::ProductP(QString& s)
+Programme* FactoryP::ProductP(QString s)
 {
     return new Programme(s);
 }

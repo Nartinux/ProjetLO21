@@ -4,7 +4,7 @@
 //----------------- CLASS VERIFREGEX ------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-bool VerifRegex::verifEntier(QString& s)
+bool VerifRegex::verifEntier(QString s)
 {
     bool ok=false;
     s.toInt(&ok);
@@ -12,45 +12,45 @@ bool VerifRegex::verifEntier(QString& s)
 }
 
 
-bool VerifRegex::verifReel(QString& s)
+bool VerifRegex::verifReel(QString s)
 {
     bool ok=false;
     s.toDouble(&ok);
     return ok;
 }
 
-bool VerifRegex::verifRationnel(QString& s)
+bool VerifRegex::verifRationnel(QString s)
 {
     int i;
     if((i=s.indexOf('/'))!=-1)
     {
-        QString& lp=s.left(i);
-        QString& rp=s.right(s.length()-(i+1));
+        QString lp=s.left(i);
+        QString rp=s.right(s.length()-(i+1));
         if(verifEntier(lp) && verifEntier(rp)) return true;
     }
     return false;
 }
 
-bool VerifRegex::verifComplexe(QString& s)
+bool VerifRegex::verifComplexe(QString s)
 {
     int i;
     if(((i=s.indexOf('$'))!=-1))
     {
-        QString& lp=s.left(i);
-        QString& rp=s.right(s.length()-(i+1));
+        QString lp=s.left(i);
+        QString rp=s.right(s.length()-(i+1));
         if(verifNombre(lp) && !verifComplexe(lp) && verifNombre(rp) && !verifComplexe(rp)) return true;
     }
     return false;
 }
 
 
-bool VerifRegex::verifNombre(QString& s)
+bool VerifRegex::verifNombre(QString s)
 {
     if(verifEntier(s) || verifReel(s) || verifRationnel(s) || verifComplexe(s)) return true;
     return false;
 }
 
-bool VerifRegex::verifOperateurSimple(QString& s)
+bool VerifRegex::verifOperateurSimple(QString s)
 {
     if (s=="+") return true;
     if (s=="-") return true;
@@ -70,7 +70,7 @@ bool VerifRegex::verifOperateurSimple(const QChar& c)
 // verifier que soit un nb est avant ou apres soit dans le cas de moins... soit que y'a un espace avant et apres
 
 // verifie les operateurs definis pas une chaine de char (et des parenthèses avec des args dedans... separés par des virgules !)
-bool VerifRegex::verifOperateurAvance(QString& s)
+bool VerifRegex::verifOperateurAvance(QString s)
 {
     int i=0;
     while(i<s.length() && (s[i]>'A' && s[i]<'Z')) i++;
@@ -96,7 +96,7 @@ bool VerifRegex::verifOperateurAvance(QString& s)
 }
 
 
-bool VerifRegex::verifAtome(QString& s) // verifie que le string est un candidat pour devenir un atome
+bool VerifRegex::verifAtome(QString s) // verifie que le string est un candidat pour devenir un atome
 {
     bool ok=true;
     if (s[0]>='A' && s[0]<='Z')
@@ -113,7 +113,7 @@ bool VerifRegex::verifAtome(QString& s) // verifie que le string est un candidat
 }
 
 
-bool VerifRegex::verifAtomeExistant(QString& s)   // verifie que c'est un atome déjà defini
+bool VerifRegex::verifAtomeExistant(QString s)   // verifie que c'est un atome déjà defini
 {
     return Atm.existAt(s);
 }
@@ -121,7 +121,7 @@ bool VerifRegex::verifAtomeExistant(QString& s)   // verifie que c'est un atome 
 // ATTENTION : avec les strings .lenght revoie la longueure totale de la chaine ne comptant pas '\0' le denier char de la chaine (excepté \0) est donc longueure -1 !!
 // on ne check pas si y'a des quotes dans la fonction pour pouvoir l'appeler récursivement sur des sous chaines sans avoir a concaténer des quotes ! ce check doit etre fait avant l'appel
 
-bool VerifRegex::verifExpression(QString& s)
+bool VerifRegex::verifExpression(QString s)
 {
     if( (s.indexOf("+")==-1) && (s.indexOf("-")==-1) && (s.indexOf("*")==-1) && (s.indexOf("/")==-1))    // on check si y'a pas d'operateurs -> juste un atome ou un operateur Avance.
     // toutes les divisions dans les expressions sont gérées a ce niveau comme des operateurs et non des signes représentant un rationnel
