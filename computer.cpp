@@ -53,23 +53,33 @@ ObjectPile& Pile::top() const {
 
 void Controleur::sentCommande(/*const */QString& s)
 {
-//expAff.setMessage(s);/*
+    //expAff.setMessage(s);
     ObjectPile* op=nullptr;
-    if ((op=factoG.Product(s))!=nullptr)
+    if (!(vrx.verifAtomeExistant(s)) && (vrx.verifAtome(s)) ) // si c'est pas un atome existant ! -> on le met dans une expression
     {
-
-
+        QString s2("\'");
+        s2+=s;
+        s2+="\'";
+        expAff.setMessage(s2);
+        op=factoE.ProductE(s2);
         expAff.push(*op);
+    }
+    else if (vrx.verifAtomeExistant(s))
+    {
+        op*=vrx.getAtm.findAt(s);
+        expAff.push(op->);
+    }
+    else if ((op=factoG.Product(s))!=nullptr)
+    {
         Expression* a1=dynamic_cast<Expression*>(op);
         Nombre* a2=dynamic_cast<Nombre*>(op);
         Programme* a3=dynamic_cast<Programme*>(op);
         Atome* a4=dynamic_cast<Atome*>(op);
-        expAff.setMessage(s);
         if(a1!=nullptr) expAff.setMessage("c'est une expression");
         if(a2!=nullptr) expAff.setMessage("c'est un nb");
         if(a3!=nullptr) expAff.setMessage("c'est un un progr");
-        if(a4!=nullptr) expAff.setMessage("c'est un atome");
-        
+        if(a4!=nullptr) { expAff.setMessage("c'est un atome"); if(expAff.taille()>=1) { } else expAff.setMessage("Erreur : pas assez d'arguments"); }
+        expAff.push(*op);
     }
     else
     {
@@ -91,7 +101,7 @@ void Controleur::sentCommande(/*const */QString& s)
                     if (s=="/") 
                     {   
                         Entier* ent=dynamic_cast<Entier*>(a2);
-                        if (ent==nullptr || ent->getInt()!=0) {expAff.push(a1->operator/(*a2)); LibMemory::freeMem(a1); LibMemory::freeMem(a2);}
+                        if (ent==nullptr || ent->getInt()!=0) {expAff.push(a1->operator/(*a2)); /*LibMemory::freeMem(a1); LibMemory::freeMem(a2);*/}
                         else 
                         {
                             expAff.push(*a1);

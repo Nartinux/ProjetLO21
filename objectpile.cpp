@@ -91,7 +91,7 @@ Atome& AtomeManager::findAt(QString& s)
 bool AtomeManager::existAt(QString& s)
 {
 	unsigned int i=0;
-	while(i<nb && tab[i].getID()!=s) i++;
+	while(i<nb) if(tab[i].getID()!=s) i++; else break;
 	if (i==nb) return false;
 	return true;
 }

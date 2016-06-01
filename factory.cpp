@@ -61,7 +61,6 @@ ObjectPile* FactoryG::Product (QString& s) // besoin de check ici si c'est un op
         while ((i=s.indexOf(" "))!=-1) s.remove(i,1); // on retire tous les espaces
         /*if(vrx.verifProgramme(s)) return fE.ProductP(s); else*/ return nullptr;
     }
-
     if (vrx.verifAtomeExistant(s)) return &(vrx.getAtm().findAt(s));   // pour les atomes, verifier qu'il y a bien quelque chose dans la pile !!!
     if(vrx.verifAtome(s)) return fA.ProductA(s);
     if(vrx.verifNombre(s)) return fN.ProductN(s); // que ca soit un nombre ou non c'est la methode ProductN qui fera la discrimiation

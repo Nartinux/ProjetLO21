@@ -218,7 +218,7 @@ void QComputer::getNextCommande()
         while(s[i]!='\'' && i<s.length()) i++;
         if(i!=s.length())
         {
-            envoiCmd(s.left(i));        // pas sur !
+            envoiCmd(s.left(i));
             s=s.right(s.length()-i);
             i=1;
             while(s[i]!='\'' && i<s.length()) i++;

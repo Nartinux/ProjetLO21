@@ -98,15 +98,17 @@ bool VerifRegex::verifOperateurAvance(QString& s)
 
 bool VerifRegex::verifAtome(QString& s) // verifie que le string est un candidat pour devenir un atome
 {
-    bool ok=false;
-    if (s[0]>'A' && s[0]<'Z')
+    bool ok=true;
+    if (s[0]>='A' && s[0]<='Z')
     {
         for (int i = 1; i < s.length(); ++i)
         {
-            if ((s[i]>'A' && s[i]<'Z') || (s[i]>'0' && s[i]<'9')) ok=true;
-            if(!ok) break;
+            if ((s[i]>='A' && s[i]<='Z') ) {}
+            else if (s[i]>='0' && s[i]<='9') {}
+                else ok=false; break;
         }
     }
+    else return false;
     return ok;
 }
 
