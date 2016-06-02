@@ -8,7 +8,8 @@ SOURCES += \
     objectpile.cpp \
     factory.cpp \
     verifregex.cpp \
-    operation.cpp
+    operation.cpp \
+    pile.cpp
 
 HEADERS += \
     computer.h \
@@ -18,4 +19,5 @@ HEADERS += \
     objectpile.h \
     factory.h \
     verifregex.h \
-    operation.h
+    operation.h \
+    pile.h

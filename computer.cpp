@@ -1,55 +1,12 @@
 #include <algorithm>
 #include "computer.h"
-#include "exception.h"
 
-
-
-
-//----------------- CLASS PILE -----------------------------------------------------------------------------------------------------------------
-
-
-void Pile::push(ObjectPile &e){
-    if (nb==nbMax) agrandissementCapacite();
-    ob[nb]=&e;
-    nb++;
-    modificationEtat();
-}
-
-
-void Pile::pop(){
-    nb--;
-    ob[nb]=nullptr;
-    modificationEtat();
-}
-
-void Pile::agrandissementCapacite()
-{
-    ObjectPile** newtab=new ObjectPile*[(nbMax+1)*2];
-    for(unsigned int i=0; i<nb; i++) newtab[i]=ob[i];
-    ObjectPile**  old=ob;
-    ob=newtab;
-    nbMax=(nbMax+1)*2;
-    delete[] old;
-}
-
-Pile::~Pile(){
-    delete[] ob;
-}
-
-
-
-ObjectPile& Pile::top() const {
-
-    if (nb==0) throw ComputerException("aucune expression sur la pile");
-    return *(ob[nb-1]);
-}
 
 
 
 
 //----------------- CLASS CONTROLEUR ------------------------------------------------------------------------------------------------------------------------------------------------
 
-// A REFAIRE COMPLETEMENT !!!!!!!!!!!!!
 
 void Controleur::sentCommande(/*const */QString& s)
 {
@@ -64,11 +21,11 @@ void Controleur::sentCommande(/*const */QString& s)
         op=factoE.ProductE(s2);
         expAff.push(*op);
     }
-    else if (vrx.verifAtomeExistant(s))
+    /*else if (vrx.verifAtomeExistant(s))
     {
         op*=vrx.getAtm.findAt(s);
         expAff.push(op->);
-    }
+    }*/
     else if ((op=factoG.Product(s))!=nullptr)
     {
         Expression* a1=dynamic_cast<Expression*>(op);

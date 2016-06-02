@@ -1,5 +1,4 @@
 #include "nombre.h"
-#include "computer.h"
 
 Nombre::~Nombre(){};
 Entier::~Entier(){};
@@ -551,8 +550,8 @@ Nombre& Complexe::neg()
 QString Complexe::toString()const
 {
 
-    Rationnel* re3=dynamic_cast<Rationnel*>(re);
-    Rationnel* im3=dynamic_cast<Rationnel*>(im);
+    //Rationnel* re3=dynamic_cast<Rationnel*>(re);
+    //Rationnel* im3=dynamic_cast<Rationnel*>(im);
     return re->toString()+"$"+im->toString();
     /*
     QString s("");

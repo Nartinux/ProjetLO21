@@ -33,7 +33,7 @@ ObjectPile* FactoryG::Product (QString s) // besoin de check ici si c'est un op�
         i=1;
         while (i<(s.length()-2)) // length -2 pour ne pas a vaoir a gerer des cas comme '44+7-' qui est illégale sinon on lance un traitement pour le - à la fin qui va echouer.
         {
-            if ( (s[i]=='-') && (s[i-1]=='(' /*&& s[]*/)) // cas type: OPE(-3,5) on veut -> OPE((-3),5)
+            if ( (s[i]=='-') && (s[i-1]=='(' )) // cas type: OPE(-3,5) on veut -> OPE((-3),5)
             {
                 int v=i+1, f=i+1;
                 while ( ( (s[v]!=',') || (!vrx.verifOperateurSimple(s[v]))) && v<s.length()) v++;
@@ -44,12 +44,12 @@ ObjectPile* FactoryG::Product (QString s) // besoin de check ici si c'est un op�
                     s.insert(v, ")");
                 }
             }
-            if ( (s[i]=='-') && (vrx.verifOperateurSimple(s.at(i-1))  || (s[i-1]==',')) ) // si y'a un - et avant, on trouve un operateur simple, une virgule
+            else if ( (s[i]=='-') && (vrx.verifOperateurSimple(s.at(i-1))  || (s[i-1]==',')) ) // si y'a un - et avant, on trouve un operateur simple, une virgule
             {
                 s.insert(i,"(");
                 i=+2;    // on incrémente de 2 pour sauter le - qui s'est décalé à i+1 du coup.
-                while((i<s.length()) && !vrx.verifOperateurSimple(s[i])) i++;
-                s.insert(i+1, ")");
+                while((i<s.length()-1) && (!vrx.verifOperateurSimple(s[i]) || s[i]!=')'))  i++;
+                s.insert(i, ")");
             }
             i++;
         }
@@ -63,7 +63,7 @@ ObjectPile* FactoryG::Product (QString s) // besoin de check ici si c'est un op�
     }
     if (vrx.verifAtomeExistant(s)) return &(vrx.getAtm().findAt(s));   // pour les atomes, verifier qu'il y a bien quelque chose dans la pile !!!
     if(vrx.verifAtome(s)) return fA.ProductA(s);
-    if(vrx.verifNombre(s)) return fN.ProductN(s); // que ca soit un nombre ou non c'est la methode ProductN qui fera la discrimiation
+    if(vrx.verifNombre(s)) return fN.ProductN(s);
     return nullptr;
 }
 

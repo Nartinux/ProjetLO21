@@ -23,11 +23,11 @@ public:
 class Expression : public ObjectPile
 {
     QString exp;
-    ObjectPile& verifExpression();
 public:
 	Expression(QString& s): exp(s){}
 	~Expression();
 	QString toString()const;
+	QString getExp() {return exp;}
 };
 
 //---------------------------------------- CLASS PROGRAMME ----------------------------------------
@@ -35,7 +35,6 @@ public:
 class Programme : public ObjectPile
 {
     QString prg;
-	ObjectPile& verifProgr();
 public:
 	Programme(QString& s): prg(s) {}
 	~Programme();
