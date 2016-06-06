@@ -10,7 +10,8 @@
 
 void Controleur::sentCommande(/*const */QString& s)
 {
-    //expAff.setMessage(s);
+    //if(vrx.verifOperateurAvance(s)) expAff.setMessage(s); else expAff.setMessage("fuck");
+
     ObjectPile* op=nullptr;
     if (!(vrx.verifAtomeExistant(s)) && (vrx.verifAtome(s)) ) // si c'est pas un atome existant ! -> on le met dans une expression
     {
@@ -34,7 +35,7 @@ void Controleur::sentCommande(/*const */QString& s)
         Atome* a4=dynamic_cast<Atome*>(op);
         if(a1!=nullptr) expAff.setMessage("c'est une expression");
         if(a2!=nullptr) expAff.setMessage("c'est un nb");
-        if(a3!=nullptr) expAff.setMessage("c'est un un progr");
+        if(a3!=nullptr) expAff.setMessage("c'est un progr");
         if(a4!=nullptr) { expAff.setMessage("c'est un atome"); if(expAff.taille()>=1) { } else expAff.setMessage("Erreur : pas assez d'arguments"); }
         expAff.push(*op);
     }
@@ -58,7 +59,7 @@ void Controleur::sentCommande(/*const */QString& s)
                     if (s=="/") 
                     {   
                         Entier* ent=dynamic_cast<Entier*>(a2);
-                        if (ent==nullptr || ent->getInt()!=0) {expAff.push(a1->operator/(*a2)); /*LibMemory::freeMem(a1); LibMemory::freeMem(a2);*/}
+                        if (ent==nullptr || ent->getInt()!=0) {expAff.push(a1->operator/(*a2));} //LibMemory::freeMem(a1); LibMemory::freeMem(a2);
                         else 
                         {
                             expAff.push(*a1);

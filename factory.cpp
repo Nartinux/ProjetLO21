@@ -26,36 +26,29 @@ void FactoryG::libereInstance()
 
 ObjectPile* FactoryG::Product (QString s) // besoin de check ici si c'est un opérateur ? a voir avec le controleur
 {
-    int i;
+    int i,j;
+    if (s[0]=='\'' && s[1]=='\'') return nullptr;   // cas ou on entre l'expression '' que l'on ne veut pas traiter !
     if (s[0]=='\'' && s[s.length()-1]=='\'') // DANS UNE EXPRESSION ON NE GERE PAS LES MULTIPLICATIONS IMPLICITES tq: 4(32+4) ou 7SIN(8)
     {
         while ((i=s.indexOf(" "))!=-1) {s.remove(i,1); i++;} // on retire tous les espaces
         i=1;
-        while (i<(s.length()-2)) // length -2 pour ne pas a vaoir a gerer des cas comme '44+7-' qui est illégale sinon on lance un traitement pour le - à la fin qui va echouer.
+        while (i<(s.length()-2))
         {
-            if ( (s[i]=='-') && (s[i-1]=='(' )) // cas type: OPE(-3,5) on veut -> OPE((-3),5)
+            if ((s[i]=='-') && (vrx.verifOperateurSimple(s.at(i-1))  || (s[i-1]==',') || (s[i-1]==')') || (s[i-1]=='(') || (s[i-1]=='\'')) )
             {
-                int v=i+1, f=i+1;
-                while ( ( (s[v]!=',') || (!vrx.verifOperateurSimple(s[v]))) && v<s.length()) v++;
-                while (s[f]!=')' && f<s.length() ) f++; // on verifie qui ne s'agit pas deja de OPE((-3),5)
-                if (v<f)    // dans ce cas insertion des parentheses
+                j=i+1;
+                while ( (s[j]!=',') && !vrx.verifOperateurSimple(s.at(j)) && (s[j]!=')') &&  j<s.length()-1 ) j++;
                 {
-                    s.insert(i,"(");
-                    s.insert(v, ")");
+                    s.insert(i, "(");
+                    s.insert(j+1, ")");
+                    i++;
                 }
-            }
-            else if ( (s[i]=='-') && (vrx.verifOperateurSimple(s.at(i-1))  || (s[i-1]==',')) ) // si y'a un - et avant, on trouve un operateur simple, une virgule
-            {
-                s.insert(i,"(");
-                i=+2;    // on incrémente de 2 pour sauter le - qui s'est décalé à i+1 du coup.
-                while((i<s.length()-1) && (!vrx.verifOperateurSimple(s[i]) || s[i]!=')'))  i++;
-                s.insert(i, ")");
+
             }
             i++;
         }
         if(vrx.verifExpression(s)) return fE.ProductE(s); else return nullptr;
     }
-
     if (s[0]=='[' && s[s.length()-1]==']')
     {
         while ((i=s.indexOf(" "))!=-1) s.remove(i,1); // on retire tous les espaces
