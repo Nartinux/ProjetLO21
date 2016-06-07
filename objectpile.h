@@ -27,7 +27,7 @@ public:
 	Expression(QString& s): exp(s){}
 	~Expression();
 	QString toString()const;
-	QString getExp() {return exp;}
+	const QString getExp()const {return exp;}
 };
 
 //---------------------------------------- CLASS PROGRAMME ----------------------------------------
@@ -57,12 +57,10 @@ public:
 	~Atome();
     const QString& getID()const {return ID;}
 	bool operator!=(Atome& a)const {return ID!=a.getID();}
+	ObjectPile* getVal() {return val;}
 	QString toString()const;
 
 };
-
-
-
 
 
 //---------------------------------------- CLASS ATOMEMANAGER ----------------------------------------
@@ -71,7 +69,7 @@ public:
 
 class AtomeManager		//singleton
 {
-	Atome* tab;
+	Atome* tab;			// tableau d'obj Atomes
 	unsigned int nb;
 	unsigned int nbMax;
 	void agrandissementCapacite();
@@ -82,7 +80,7 @@ class AtomeManager		//singleton
 
 	struct Handler {
         AtomeManager* instance;
-        Handler(): instance(nullptr){};
+        Handler(): instance(nullptr){}
         ~Handler(){delete instance;}
 	};
 	static Handler handler;

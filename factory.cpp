@@ -3,7 +3,7 @@
 
 //----------------- CLASS FACTORYG ------------------------------------------------------------------------------------------------------------------------------------------------
 
-FactoryG::FactoryG(): fA(FactoryA::getInstance()), fN(FactoryN::getInstance()), fE(FactoryE::getInstance()), fP(FactoryP::getInstance()), vrx(*(new VerifRegex())) {}
+FactoryG::FactoryG(): fN(FactoryN::getInstance()), fE(FactoryE::getInstance()), fP(FactoryP::getInstance()), vrx(VerifRegex::getInstance()) {}
 
 FactoryG::~FactoryG(){}
 
@@ -54,48 +54,10 @@ ObjectPile* FactoryG::Product (QString s) // besoin de check ici si c'est un op�
         while ((i=s.indexOf(" "))!=-1) s.remove(i,1); // on retire tous les espaces
         /*if(vrx.verifProgramme(s)) return fE.ProductP(s); else*/ return nullptr;
     }
-    if (vrx.verifAtomeExistant(s)) return &(vrx.getAtm().findAt(s));   // pour les atomes, verifier qu'il y a bien quelque chose dans la pile !!!
-    if(vrx.verifAtome(s)) return fA.ProductA(s);
     if(vrx.verifNombre(s)) return fN.ProductN(s);
     return nullptr;
 }
 
-
-
-//----------------- CLASS FACTORYA ------------------------------------------------------------------------------------------------------------------------------------------------
-
-FactoryA::FactoryA(): Atm(AtomeManager::getInstance()) {}
-
-FactoryA::~FactoryA() {}
-
-
-
-
-FactoryA::Handler FactoryA::handler=FactoryA::Handler();
-
-FactoryA& FactoryA::getInstance()
-{
-    if(handler.instance==nullptr){handler.instance= new FactoryA;}
-    return *handler.instance;
-}
-
-void FactoryA::libereInstance()
-{
-    if (handler.instance == nullptr) throw ComputerException("impossible to destruct an instance which haven't been created");
-    delete handler.instance;
-    handler.instance=nullptr;
-}
-
-
-Atome* FactoryA::ProductA(QString s)
-{
-    VerifRegex *vrx = new VerifRegex();
-    if (vrx->verifOperateurSimple(s)) return nullptr; //Pour pas qu'un operateur comme "DIV", "MOD".. soient considérés comme des atomes
-    Atome* at=new Atome(s);
-    // comment faire pour lui affecter la valeur ? ici ou dans le controleur ? ou ailleurs ?
-    Atm.addAtome(*at);
-    return at;
-}
 
 
 //----------------- CLASS FACTORYN ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -221,3 +183,6 @@ Programme* FactoryP::ProductP(QString s)
 {
     return new Programme(s);
 }
+
+
+

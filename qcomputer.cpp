@@ -5,12 +5,12 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     //creer les objets
     pile = new Pile();
     factg = &FactoryG::getInstance();
-    facta = &FactoryA::getInstance();
     factp = &FactoryP::getInstance();
     facte = &FactoryE::getInstance();
     factn = &FactoryN::getInstance();
-    vrx= new VerifRegex();
-    controleur=new Controleur(*pile, *vrx, *factg, *facta, *factp, *facte, *factn); 
+    vrx = &VerifRegex::getInstance();
+    factoop = FactoryOperateur::getInstance(*pile);     // la pile est pas en singleton, et il faut qu'ils aient la meme
+    controleur=new Controleur(*pile, *vrx, *factoop, *factg, *factp, *facte, *factn); 
     message=new QLineEdit(this);
     vuePile=new QTableWidget(pile->getNbItemsToAffiche(),1,this);
     commande = new QLineEditable(this);

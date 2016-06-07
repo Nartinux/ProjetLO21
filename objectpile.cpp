@@ -1,14 +1,12 @@
 #include "objectpile.h"
 
 ObjectPile::~ObjectPile(){}
-Expression::~Expression(){}
-Programme::~Programme(){}
-Atome::~Atome(){}
+
 
 
 //---------------------------------------- CLASS EXPRESSION ----------------------------------------
 
-
+Expression::~Expression(){}
 
 QString Expression::toString()const
 {
@@ -18,7 +16,7 @@ QString Expression::toString()const
 
 //---------------------------------------- CLASS PROGRAMME ----------------------------------------
 
-
+Programme::~Programme(){}
 
 QString Programme::toString()const
 {
@@ -28,13 +26,16 @@ QString Programme::toString()const
 //---------------------------------------- CLASS ATOME ----------------------------------------------
 
 Atome::Atome(){}
-
+Atome::~Atome()
+{
+	if(val) delete val;		// si c'est pas nullptr, on le delete
+}
 
 QString Atome::toString()const
 {
     return ID;
 }
-// cas ou on voudrais afficher l'ID ! attention pas l'usage général !
+// cas ou on voudrais afficher l'ID ...
 
 
 //---------------------------------------- CLASS ATOMEMANAGER ----------------------------------------
@@ -72,7 +73,7 @@ void AtomeManager::addAtome(Atome& a){
 
 void AtomeManager::removeAtome(Atome& a){
 	unsigned int i=0;
-    while(i<nb && tab[i].operator !=(a)) i++;
+    while(i<nb && tab[i].operator!=(a)) i++;
 	if (i==nb) throw ComputerException("elimination d'un Atome inexistant");
     delete &tab[i];
 	i++;

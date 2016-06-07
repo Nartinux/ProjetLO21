@@ -3,6 +3,24 @@
 
 //----------------- CLASS VERIFREGEX ------------------------------------------------------------------------------------------------------------------------------------------------
 
+VerifRegex::~VerifRegex() {}
+
+VerifRegex::Handler VerifRegex::handler=VerifRegex::Handler();
+
+VerifRegex& VerifRegex::getInstance()
+{
+    if(handler.instance==nullptr){handler.instance= new VerifRegex;}
+    return *handler.instance;
+}
+
+void VerifRegex::libereInstance()
+{
+    if (handler.instance == nullptr) throw ComputerException("impossible to destruct an instance which haven't been created");
+    delete handler.instance;
+    handler.instance=nullptr;
+}
+
+
 
 bool VerifRegex::verifEntier(QString s)
 {
@@ -56,25 +74,60 @@ bool VerifRegex::verifOperateurSimple(QString s)
     if (s=="-") return true;
     if (s=="*") return true;
     if (s=="/") return true;
-    if (s=="$") return true;    // ca va poser pb dans le cas de les identification d'expression donc a mettre ailleurs...
-    if (s=="MOD") return true;  // technique ment plus du style verifOperateurAvancé
-    if (s=="DIV") return true;
     return false;
 }
 
-bool VerifRegex::verifOperateurSimple(const QChar& c)
-{
-    if (c=='+') return true;
-    if (c=='-') return true;
-    if (c=='*') return true;
-    if (c=='/') return true;
-    if (c=='$') return true;
-    return false;
-}
-// verifier que soit un nb est avant ou apres soit dans le cas de moins... soit que y'a un espace avant et apres
 
-// verifie les operateurs definis pas une chaine de char (et des parenthèses avec des args dedans... separés par des virgules !)
+
 bool VerifRegex::verifOperateurAvance(QString s)
+{
+    // --- op sur les nb
+    if (s=="DIV") return true;
+    if (s=="MOD") return true;
+    if (s=="NEG") return true;
+    if (s=="NUM") return true;
+    if (s=="DEN") return true;
+    if (s=="$") return true;    // sure about that ? 
+    if (s=="RE") return true;
+    if (s=="IM") return true;
+
+    // --- op logiques
+    if (s=="AND") return true;
+    if (s=="OR") return true;
+    if (s=="NOT") return true;
+    if (s=="<") return true;
+    if (s==">") return true;
+    if (s=="=<") return true;
+    if (s==">=") return true;
+    if (s=="!=") return true;
+    if (s=="=") return true;
+
+    // --- op de manip de progr et exp
+    if (s=="EVAL") return true;
+
+    // --- op de manip d'atomes
+    if (s=="STO") return true;
+    if (s=="FORGET") return true;
+
+    // --- op de manip de pile
+    if (s=="DUP") return true;
+    if (s=="DROP") return true;
+    if (s=="SWAP") return true;
+    if (s=="LASTOP") return true;
+    if (s=="LASTARGS") return true;
+    if (s=="UNDO") return true;
+    if (s=="REDO") return true;
+    if (s=="CLEAR") return true;
+    return false;
+}
+
+
+
+
+
+// verifier que soit un nb est avant ou apres soit dans le cas de moins... soit que y'a un espace avant et apres
+// verifie les operateurs definis pas une chaine de char (et des parenthèses avec des args dedans... separés par des virgules !)
+bool VerifRegex::verifOperateurAvanceExp(QString s)
 {
     int i=0;
     while (i<s.length() && (s[i]>='A') && (s[i]<='Z')) i++;
@@ -131,89 +184,81 @@ bool VerifRegex::verifAtomeExistant(QString s)   // verifie que c'est un atome d
 
 bool VerifRegex::verifExpression(QString s)
 {
-    if (s[0]=='\'' && s[1]=='\'') return true;  // ca veut dire qu'apres appel recursif de la fonction, on est arrivé a la fin, on veut check expression vide ''.
     if( (s.indexOf("+")==-1) && (s.indexOf("-")==-1) && (s.indexOf("*")==-1) && (s.indexOf("/")==-1))    // on check si y'a pas d'operateurs -> juste un atome ou un operateur Avance.
     // toutes les divisions dans les expressions sont gérées a ce niveau comme des operateurs et non des signes représentant un rationnel
     {
         if ( (s[1]=='(') && (s[s.length()-2]==')') )   // cas ou on a 1 layer de parethèses et pas d'operations simples dedans, type: '(TOTO)'
         {
-            if(verifNombre(s.mid(2, (s.length()-4))) || verifAtome(s.mid(2, (s.length()-4))) || verifAtomeExistant(s.mid(2, (s.length()-4))) || 
-                verifOperateurAvance(s.mid(2,(s.length()-4)))) return true;
+            if(verifNombre(s.mid(2, (s.length()-4))) || verifAtomeExistant(s.mid(2, (s.length()-4))) || verifOperateurAvanceExp(s.mid(2,(s.length()-4)))) return true;
             return false;
         }
-        if(verifNombre(s.mid(1, s.length()-2)) || verifAtome(s.mid(2, (s.length()-4))) || verifAtomeExistant(s.mid(1, s.length()-2)) || verifOperateurAvance(s.mid(1, (s.length()-2)))) 
-            return true;
+        if(verifNombre(s.mid(1, s.length()-2)) || verifAtome(s.mid(2, (s.length()-4))) || verifOperateurAvanceExp(s.mid(1, (s.length()-2)))) return true;
         return false;
     }
-    int i=1, j=1; //return true;
-    bool ok=true; 
-    //while (i<(s.length()-1))
-    //{
-        //if (verifOperateurSimple(s.at(i)))
-        //{
-            while (i<(s.length()-1) && !verifOperateurSimple(s.at(i))) i++;
-            if(i==(s.length()-1)) return false;
-            if(s[j]!='(')
-            {
-                if( verifNombre(s.mid(j, i-j)) || verifAtome(s.mid(j, i-j)) || verifAtomeExistant(s.mid(j, i-j)) || verifOperateurAvance(s.mid(j, i-j)))
-                {
-                    QString s2="'";
-                    s2+=s.right(s.length()-(i+1));
-                    return verifExpression(s2);
-                }
-                return false;
-            }
-            else if( (s[j]=='(') && (s[i]=='-') && (j==i-1)) // cas type: (-987)
-            {
-                j++;
-                while(s[i]!=')' && i<s.length()) i++;
-                if (i==s.length()) return false; // pas de fin de parenthèse !! -> illegal
-                QString s2=s.mid(j,i-j);
-                ok=verifNombre(s2);
-                //i++;
-                s2="'";
-                s2+=s.right(s.length()-(i+1));
-                if(ok) return verifExpression(s2); else return false;
-            }
-            else if (s[j]=='(' && s[i-1]==')')   // cas ou on a 1 layer de parethèses et pas d'operations simples dedans, type: '44*(X)/7'
-            {
-                QString s2="'";
-                s2+=s.mid(j+1,i-2-(j+1));
-                s2+="'";
-                ok=verifExpression(s2); // on rappelle la fonction qui s'arretera au premier if
-                s2="'";
-                s2+=s.right(s.length()-(i+1));
-                if(ok) return verifExpression(s2); else return false;
-            }
-            else if (s[j]=='(' && s[i-1]!=')') // cas d'operations dans les paretheses
-            {
-                int countpo=1; // nb de parentheses ouvrantes decouvertes jusqu'alors
-                int countpf=0; // nb de parentheses fermantes decouvertes jusqu'alors
-                i=j+1;
-                while(countpf!=countpo && i<s.length())
-                {
-                    if (s[i]==')') countpf++;
-                    if (s[i]=='(') countpo++;
-                    i++;
-                }
-                if (i==s.length()) return false; // pas de fin de parenthèse !! -> illegal
-                else
-                {
-                    QString s2="'";
-                    s2+=s.mid(j+1, (i-1)-(j+1));
-                    s2+="'";
-                    ok=verifExpression(s2);
-                    s2="'";
-                    s2+=s.right(s.length()-(i+2));
-                    if(ok) return verifExpression(s2); else return false;
 
-                }
-            }
-           // if(!ok) break; else j=i+1;
-        //}
-        //i++;
-    //}
-    //return ok;
+    int i=1, j=1;
+    bool ok=true; 
+    while (i<(s.length()-1) && !verifOperateurSimple(s.at(i))) i++;
+    if(i==(s.length()-1) || (i==s.length()-2)) return false;
+    if(s[j]!='(')
+    {
+        if( verifNombre(s.mid(j, i-j)) || verifAtomeExistant(s.mid(j, i-j)) || verifOperateurAvanceExp(s.mid(j, i-j)))
+        {
+            QString s2="'";
+            s2+=s.right(s.length()-(i+1));
+            return verifExpression(s2);
+        }
+        return false;
+    }
+    else if( (s[j]=='(') && (s[i]=='-') && (j==i-1)) // cas type: (-987)
+    {
+        j++;
+        while(s[i]!=')' && i<s.length()) i++;
+        if (i==s.length()) return false; // pas de fin de parenthèse !! -> illegal
+        QString s2=s.mid(j,i-j);
+        ok=verifNombre(s2);
+        i++;
+        if (i==s.length()-1 && ok) return true;
+        s2="'";
+        s2+=s.right(s.length()-(i+1));
+        if(ok) return verifExpression(s2); else return false;
+    }
+    else if (s[j]=='(' && s[i-1]==')')   // cas ou on a 1 layer de parethèses et pas d'operations simples dedans, type: '44*(X)/7'
+    {
+        QString s2="'";
+        s2+=s.mid(j+1,i-2-(j+1));
+        s2+="'";
+        ok=verifExpression(s2); // on rappelle la fonction qui s'arretera au premier if
+        if (i==s.length()-1 && ok) return true;
+        s2="'";
+        s2+=s.right(s.length()-(i+1));
+        if(ok) return verifExpression(s2); else return false;
+    }
+    else if (s[j]=='(' && s[i-1]!=')') // cas d'operations dans les paretheses
+    {
+        int countpo=1; // nb de parentheses ouvrantes decouvertes jusqu'alors
+        int countpf=0; // nb de parentheses fermantes decouvertes jusqu'alors
+        i=j+1;
+        while(countpf!=countpo && i<s.length())
+        {
+            if (s[i]==')') countpf++;
+            if (s[i]=='(') countpo++;
+            i++;
+        }
+        if (i==s.length() || (i==s.length()-3)) return false; // pas de fin de parenthèse ou un unique caractere apresla fin des parentheses qui est juste avant le ' final
+        else
+        {
+            QString s2="'";
+            s2+=s.mid(j+1, (i-1)-(j+1));
+            s2+="'";
+            ok=verifExpression(s2);
+            if (i==s.length()-1 && ok) return true;
+            s2="'";
+            s2+=s.right(s.length()-(i+1));
+            if(ok) return verifExpression(s2); else return false;
+        }
+    }
+    return false;
 }
 
 // on passe un sting sans espaces, modifié ppur qu'il n'y ait pas le pb du -préfixé

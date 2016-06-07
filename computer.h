@@ -6,7 +6,6 @@
 #include <QObject>
 #include <QDebug>
 #include "factory.h"
-#include "pile.h"
 #include "operation.h"
 
 
@@ -21,18 +20,18 @@ using namespace std;
 
 class Controleur
 {
+    FactoryOperateur& factoOP;
     FactoryG& factoG;
-    FactoryA& factoA;
     FactoryE& factoE;
     FactoryN& factoN;
     FactoryP& factoP;
     Pile& expAff;
     VerifRegex& vrx;
 public:
-    Controleur(Pile& p, VerifRegex& v, FactoryG& fg,FactoryA& fa, FactoryP& fp, FactoryE& fe, FactoryN& fn):
-    expAff(p), vrx(v), factoG(fg), factoA(fa), factoP(fp), factoE(fe), factoN(fn) {}
+    Controleur(Pile& p, VerifRegex& v,FactoryOperateur& fop, FactoryG& fg, FactoryP& fp, FactoryE& fe, FactoryN& fn):
+    expAff(p), vrx(v), factoOP(fop), factoG(fg), factoP(fp), factoE(fe), factoN(fn) {}
 
-    void sentCommande(/*const*/ QString& c);
+    void sentCommande( QString& c);
 };
 
 bool estUnOperateur(const QString s);

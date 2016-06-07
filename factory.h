@@ -3,36 +3,7 @@
 
 #include "verifregex.h"
 #include "nombre.h"
-
-
-// ------------------------------------------------------ CLASS FACTORYA ------------------------------------------------------------------------
-
-
-class FactoryA
-{
-    AtomeManager& Atm;
-
-    FactoryA();
-    ~FactoryA();
-    FactoryA(const FactoryA& fa);
-    FactoryA& operator=(const FactoryA& fa);
-
-    struct Handler {
-        FactoryA* instance;
-        Handler(): instance(nullptr){}
-        ~Handler(){delete instance;}
-    };
-    static Handler handler;
-
-
-public:
-    static FactoryA& getInstance();
-    static void libereInstance();
-
-    Atome* ProductA(QString s);
-    AtomeManager& getAtm() {return Atm;}
-};
-
+#include "pile.h"
 
 
 // ------------------------------------------------------ CLASS FACTORYN ------------------------------------------------------------------------
@@ -114,7 +85,6 @@ public:
 
 class FactoryG // classe a instancier dans le controleur
 {
-    FactoryA& fA;
     FactoryN& fN;
     FactoryE& fE;
     FactoryP& fP;

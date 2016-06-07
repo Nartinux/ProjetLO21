@@ -73,11 +73,11 @@ class QComputer : public QWidget
     QSignalMapper* mapper; //collecte des signaux sans arguments et les redistribue avec argument
     Pile* pile;
     FactoryG* factg;
-    FactoryA* facta;
     FactoryP* factp;
     FactoryE* facte;
     FactoryN* factn;
     VerifRegex* vrx;
+    FactoryOperateur* factoop;
     Controleur* controleur;
 
 public:
