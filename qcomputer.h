@@ -59,6 +59,7 @@ class QComputer : public QWidget
     QPushButton* butRe;
     QPushButton* butIm;
     QPushButton* submit;
+    QPushButton* vueatm;    // vue atm
     QHBoxLayout* hori1;
     QHBoxLayout* hori2;
     QHBoxLayout* hori3;
@@ -66,9 +67,11 @@ class QComputer : public QWidget
     QHBoxLayout* hori5;
     QHBoxLayout* hori6;
     QHBoxLayout* hori7;
+    QHBoxLayout* hori8;     // enter + vue atm
     QVBoxLayout* verti1;
     QVBoxLayout* verti2;
     QVBoxLayout* verti3;
+    QVBoxLayout* verti4;    // ...
     QHBoxLayout* pave;
     QSignalMapper* mapper; //collecte des signaux sans arguments et les redistribue avec argument
     Pile* pile;

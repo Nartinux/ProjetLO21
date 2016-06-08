@@ -65,54 +65,37 @@ void AtomeManager::libereInstance()
 	handler.instance=nullptr;
 }
 
-void AtomeManager::addAtome(Atome& a){
+void AtomeManager::addAtome(Atome& a)
+	{
 	if (nb==nbMax) agrandissementCapacite();
     tab[nb++]=a;
 }
 
 
-void AtomeManager::removeAtome(Atome& a){
+void AtomeManager::removeAtome(QString& s)
+{
 	unsigned int i=0;
-    while(i<nb && tab[i].operator!=(a)) i++;
-	if (i==nb) throw ComputerException("elimination d'un Atome inexistant");
-    delete &tab[i];
+    while(i<nb) {if(tab[i].getID()!=s) i++; else break;}
+    //delete &tab[i];
 	i++;
-	while(i<nb) { tab[i-1]=tab[i]; i++; }
+    while(i<nb) {tab[i-1]=tab[i]; i++;}
 	nb--;
 }
 
-Atome& AtomeManager::findAt(QString& s)
+Atome* AtomeManager::findAt(QString& s)
 {
 	unsigned int i=0;
-	while(i<nb && tab[i].getID()!=s) i++;
-	if (i==nb) throw ComputerException("recherche d'un atome inexistant");
-	return tab[i];
+	//while(i<nb && tab[i].getID()!=s) i++;
+	while(i<nb) {if(tab[i].getID()!=s) i++; else break;}
+	if (i==nb) return nullptr;
+    return &tab[i];
 }
 
 bool AtomeManager::existAt(QString& s)
 {
 	unsigned int i=0;
-	while(i<nb) if(tab[i].getID()!=s) i++; else break;
+	while(i<nb) {if(tab[i].getID()!=s) i++; else break;}
 	if (i==nb) return false;
 	return true;
 }
-
-
-
-/*
-ExpressionManager& ExpressionManager::operator=(const ExpressionManager& m){
-	if (this==&m) return *this;
-	Expression** newtab=new Expression*[m.nbMax];
-	for(unsigned int i=0; i<nb; i++) 
-		newtab[i]=new Expression(*m.exps[i]);
-	Expression** old=exps;
-	unsigned int oldnb=nb;
-	exps=newtab;
-	nb=m.nb;
-	nbMax=m.nbMax;
-	for(unsigned int i=0; i<oldnb; i++) delete old[i];
-	delete[] old;
-	return *this;
-}
-*/
 

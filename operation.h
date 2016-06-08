@@ -8,9 +8,10 @@
 #include "nombre.h"
 #include "pile.h"
 #include "verifregex.h"
+#include "factory.h"
+#include "factoryoperateur.h"
 
 
-// BUT FAIRE EVAL POUR LES EXPRESSIONS
 
 
 
@@ -23,8 +24,9 @@ protected:
     Pile& expAff;	// FAUT QUE CA SOIT LA MEME PILE -> singleton ou bien faire attention lors de la construction !
 	VerifRegex& vrx;
     AtomeManager& atm;
+    FactoryN& fN;
 public:
-    OperateurAvance(Pile& p): expAff(p), vrx(VerifRegex::getInstance()), atm(AtomeManager::getInstance()) {}
+    OperateurAvance(Pile& p): expAff(p), vrx(VerifRegex::getInstance()), atm(AtomeManager::getInstance()), fN(FactoryN::getInstance()) {}
 	virtual ~OperateurAvance();
     virtual void operation()=0;	// cette methode prends 0 args elle les prends direct dans la pile
     Pile& getPile(){return expAff;}
@@ -57,6 +59,10 @@ public:
 };
 
 
+
+// ------------------------------------------------------ CLASS FORGET ------------------------------------------------------------------------
+
+
 class Forget : public OperateurAvance
 {
 public:
@@ -87,6 +93,7 @@ Entier& diveucli(Entier& a,Entier& b);
 
 // ------------------------------------------------------ CLASS FACTORYOPERATEUR ------------------------------------------------------------------------
 
+
 class FactoryOperateur // classe a instancier dans le controleur
 {
     VerifRegex& vrx;
@@ -112,6 +119,14 @@ public:
     static void libereInstance();
     OperateurAvance* ProductOP(QString s);
 };
+
+
+
+
+
+
+
+
 
 
 

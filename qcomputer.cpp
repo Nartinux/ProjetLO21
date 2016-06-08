@@ -46,6 +46,9 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     butIm= new QPushButton("IM", this);
     submit= new QPushButton("Enter",this);
 
+    // vue atomemanager
+    vueatm= new QPushButton("Variables stokées",this);
+
     but0->setCursor(Qt::PointingHandCursor);
     but1->setCursor(Qt::PointingHandCursor);
     but2->setCursor(Qt::PointingHandCursor);
@@ -61,6 +64,9 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     butDiv->setCursor(Qt::PointingHandCursor);
     butSub->setCursor(Qt::PointingHandCursor);
 
+    //vue atm
+    //vueatm->setCursor(Qt::PointingHandCursor);
+
     hori1 = new QHBoxLayout;
     hori2 = new QHBoxLayout;
     hori3 = new QHBoxLayout;
@@ -68,10 +74,12 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     hori5 = new QHBoxLayout;
     hori6 = new QHBoxLayout;
     hori7 = new QHBoxLayout;
+    hori8 = new QHBoxLayout;    // pour enter et vue atm
     verti1= new QVBoxLayout;
     verti2= new QVBoxLayout;
     verti3= new QVBoxLayout;
     pave= new QHBoxLayout;
+    verti4= new QVBoxLayout;// ...
 
     hori1->addWidget(but1);
     hori1->addWidget(but2);
@@ -94,6 +102,8 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     hori7->addWidget(but$);
     hori7->addWidget(butRe);
     hori7->addWidget(butIm);
+    hori8->addWidget(submit);   // enter 
+    hori8->addWidget(vueatm);   // vue atm
     verti1->addLayout(hori1);
     verti1->addLayout(hori2);
     verti1->addLayout(hori3);
@@ -109,14 +119,15 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     pave->addLayout(verti1);
     pave->addLayout(verti2);
     pave->addLayout(verti3);
+    verti4->addLayout(hori8);   // ici
+    verti4->addLayout(pave);    // la
 
 
     // positionner les objets sur la fenetre
     couche->addWidget(message);
     couche->addWidget(vuePile);
     couche->addWidget(commande);
-    couche->addLayout(pave);
-    couche->addWidget(submit);
+    couche->addLayout(verti4);  // remplace le pave !
     setLayout(couche);
 
 

@@ -1,4 +1,4 @@
-#include"operation.h"
+#include "operation.h"
 
 //------------------------------------------- CLASS OPERATEURAVANCE  ---------------------------------------------------------------------------------------------------
 
@@ -23,66 +23,210 @@ void Eval::operation()
         getPile().push(*exp);
         getPile().setMessage("Erreur ce n'est pas une expression");
     }
-   
+    else
+    {
+        QString s=exp->getExp();
+        if( (s.indexOf("+")==-1) && (s.indexOf("-")==-1) && (s.indexOf("*")==-1) && (s.indexOf("/")==-1))    // on check si y'a pas d'operateurs -> juste un atome ou un operateur Avance.
+        {
+            if ( (s[1]=='(') && (s[s.length()-2]==')') )   // cas ou on a 1 layer de parethèses et pas d'operations simples dedans, type: '(TOTO)'
+            {
+                s.remove(1,1);
+                s.remove(s.length()-2,1);
+                Expression* express=new Expression(s);
+                expAff.push(*express);
+                operation();            // rappel recursif d'eval dans la fonction
+            }
+            else
+            {
+                if(vrx.verifNombre(s.mid(1,(s.length()-2))))
+                {
+                    Nombre* n=fN.ProductN(s.mid(1, (s.length()-2)));
+                    expAff.push(*n);
+                } 
+                else if (vrx.verifAtomeExistant(s.mid(1, (s.length()-2))))
+                {
+                    Atome* atexist=atm.findAt(s.mid(1, (s.length()-2)));
+                    expAff.push(*(atexist->getVal()));
+                }
+                else if (vrx.verifOperateurAvanceExp(s.mid(1,(s.length()-2))))
+                {
+                    int i=1;
+                    while (i<s.length() && (s[i]>='A') && (s[i]<='Z')) i++;
+
+                    FactoryOperateur* fOP=FactoryOperateur::getInstance(expAff);
+                    QString opav=s.mid(1, (i-1));     
+                    OperateurAvance* op=fOP->ProductOP(opav);
+
+                    int j=i+1;
+                    while(i<s.length() && s[i]!=',') i++;
+                    if(i!=s.length())
+                    {
+                        if (vrx.verifNombre(s.mid(j, i-j)))
+                        {
+                            Nombre* n=fN.ProductN(s.mid(j, i-j));
+                            expAff.push(*n);
+                        }
+                        if (vrx.verifAtomeExistant(s.mid(j, i-j)))
+                        {
+                            Atome* atexist=atm.findAt(s.mid(j, i-j));
+                            expAff.push(*(atexist->getVal()));
+                        }
+                        j=i+1;
+                        while(i<s.length() && s[i]!=')') i++;
+                        if (vrx.verifNombre(s.mid(j, i-j)))
+                        {
+                            Nombre* n=fN.ProductN(s.mid(j, i-j));
+                            expAff.push(*n); 
+                        }
+                        if (vrx.verifAtomeExistant(s.mid(j, i-j)))
+                        {
+                            Atome* atexist=atm.findAt(s.mid(j, i-j));
+                            expAff.push(*(atexist->getVal()));
+                        }
+                    }
+                    else 
+                    {
+                        if (vrx.verifNombre(s.mid(j, ((i-2)-j) )))
+                        {
+                            Nombre* n=fN.ProductN(s.mid(j,((i-2)-j)));
+                            expAff.push(*n); 
+                        }
+                        if (vrx.verifAtomeExistant(s.mid(j, ((i-2)-j) )))
+                        {
+                            Atome* atexist=atm.findAt(s.mid(j,((i-2)-j)));
+                            expAff.push(*(atexist->getVal()));
+                        }
+                    }
+                    op->operation();
+                }
+            }
+        }
+/*
+        int i=1, j=1;
+        bool ok=true; 
+        
+        while (i<(s.length()-1) && !verifOperateurSimple(s.at(i))) i++;
+        if(i==(s.length()-1) || (i==s.length()-2)) return false;
+        if(s[j]!='(')
+        {
+            if( verifNombre(s.mid(j, i-j)) || verifAtomeExistant(s.mid(j, i-j)) || verifOperateurAvanceExp(s.mid(j, i-j)))
+            {
+                QString s2="'";
+                s2+=s.right(s.length()-(i+1));
+                return verifExpression(s2);
+            }
+            return false;
+        }
+        else if( (s[j]=='(') && (s[i]=='-') && (j==i-1)) // cas type: (-987)
+        {
+            j++;
+            while(s[i]!=')' && i<s.length()) i++;
+            if (i==s.length()) return false; // pas de fin de parenthèse !! -> illegal
+            QString s2=s.mid(j,i-j);
+            ok=verifNombre(s2);
+            i++;
+            if (i==s.length()-1 && ok) return true;
+            s2="'";
+            s2+=s.right(s.length()-(i+1));
+            if(ok) return verifExpression(s2); else return false;
+        }
+        else if (s[j]=='(' && s[i-1]==')')   // cas ou on a 1 layer de parethèses et pas d'operations simples dedans, type: '44*(X)/7'
+        {
+            QString s2="'";
+            s2+=s.mid(j+1,i-2-(j+1));
+            s2+="'";
+            ok=verifExpression(s2); // on rappelle la fonction qui s'arretera au premier if
+            if (i==s.length()-1 && ok) return true;
+            s2="'";
+            s2+=s.right(s.length()-(i+1));
+            if(ok) return verifExpression(s2); else return false;
+        }
+        else if (s[j]=='(' && s[i-1]!=')') // cas d'operations dans les paretheses
+        {
+            int countpo=1; // nb de parentheses ouvrantes decouvertes jusqu'alors
+            int countpf=0; // nb de parentheses fermantes decouvertes jusqu'alors
+            i=j+1;
+            while(countpf!=countpo && i<s.length())
+            {
+                if (s[i]==')') countpf++;
+                if (s[i]=='(') countpo++;
+                i++;
+            }
+            if (i==s.length() || (i==s.length()-3)) return false; // pas de fin de parenthèse ou un unique caractere apresla fin des parentheses qui est juste avant le ' final
+            else
+            {
+                QString s2="'";
+                s2+=s.mid(j+1, (i-1)-(j+1));
+                s2+="'";
+                ok=verifExpression(s2);
+                if (i==s.length()-1 && ok) return true;
+                s2="'";
+                s2+=s.right(s.length()-(i+1));
+                if(ok) return verifExpression(s2); else return false;
+            }
+        }
+        return false;*/
+    }   
 }
 
 
 //------------------------------------------- CLASS STO ---------------------------------------------------------------------------------------------------
 
 
-Sto::~Sto() {}
-
-
+Sto::~Sto(){}
 
 
 void Sto::operation()
 {
-    ObjectPile& val=getPile().top();
-    getPile().pop();
-
-    ObjectPile& exp=getPile().top();
-    getPile().pop();
-    Expression* expat=dynamic_cast<Expression*>(&exp);
-    if (!expat)
+    if (expAff.taille()>=2)
     {
-        getPile().push(*expat);
-        getPile().setMessage("Erreur ce n'est pas une expression");
-        getPile().push(val);                // on remet aussi l'objet qui etait a mettre dans l'atome
-    }
-    else
-    {
-        QString s= expat->getExp();
-        QString s2=s.mid(1,(s.length()-2));
+        ObjectPile& val=getPile().top();
+        getPile().pop();
 
-        if (getVrx().verifOperateurAvance(s2))
+        ObjectPile& exp=getPile().top();
+        getPile().pop();
+        Expression* expat=dynamic_cast<Expression*>(&exp);
+        if (expat==nullptr)
         {
-            getPile().push(*expat);
-            getPile().setMessage("Non, il s'agit d'un operateur");
-            getPile().push(val);            // on remet aussi l'objet qui etait a mettre dans l'atome
+            getPile().push(exp);
+            getPile().setMessage("Erreur ce n'est pas une expression");
+            getPile().push(val);                // on remet aussi l'objet qui etait a mettre dans l'atome
         }
-        else if(getVrx().verifAtomeExistant(s2))
+        else
         {
-            Atome& at=getAtm().findAt(s2);  // on cherche l'atome dans l'atome manager
-            //delete at.getVal();             // on detruit l'ancienne valeur
-            ObjectPile* obp=at.getVal();
-            obp=&val;                       // on met la valeur du premier objectPile recup, quoi que se soit.
-            //delete expat;                   // on detruit l'expression represantant l'atome
+            QString s= expat->getExp();
+            QString s2=s.mid(1,(s.length()-2));
+
+            if (getVrx().verifOperateurAvance(s2))
+            {
+                getPile().push(*expat);
+                getPile().setMessage("Non, il s'agit d'un operateur");
+                getPile().push(val);            // on remet aussi l'objet qui etait a mettre dans l'atome
+            }
+            else if(getVrx().verifAtomeExistant(s2))
+            {
+                Atome* at=getAtm().findAt(s2);  // on cherche l'atome dans l'atome manager
+                //delete at.getVal();             // on detruit l'ancienne valeur
+                ObjectPile* obp=at->getVal();
+                obp=&val;                       // on met la valeur du premier objectPile recup, quoi que se soit.
+                //delete expat;                   // on detruit l'expression represantant l'atome
+                getPile().setMessage("atome réevalué");
+            }
+            else if (getVrx().verifAtome(s2))
+            {
+                Atome* a=new Atome(s2,&val);         // on cree un nouvel atome
+                getAtm().addAtome(*a);          // on le met dans AtomeManager
+                //delete expat;                   // on detruit l'expression represantant l'atome
+                getPile().setMessage("atome crée");
+            }
+            else    // l'expression ne represente pas un atome
+            {
+                getPile().push(*expat);
+                getPile().setMessage("l'expression n'est pas un atome");
+                getPile().push(val);            // on remet aussi l'objet qui etait a mettre dans l'atome
+            }
         }
-        else if (getVrx().verifAtome(s2))
-        {
-            Atome* a=new Atome(s2);         // on cree un nouvel atome
-            ObjectPile* obp=a->getVal();
-            obp=&val;                       // on lui affecte la valeur adéquate
-            getAtm().addAtome(*a);          // on le met dans AtomeManager
-            //delete expat;                   // on detruit l'expression represantant l'atome
-        }
-        else    // l'expression ne represente pas un atome
-        {
-            getPile().push(*expat);
-            getPile().setMessage("l'expression n'est pas un atome");
-            getPile().push(val);            // on remet aussi l'objet qui etait a mettre dans l'atome
-        }
-    }
+    }else expAff.setMessage("necessite deux arguments");
 }
 
 
@@ -99,7 +243,7 @@ void Forget::operation()
     Expression* expat=dynamic_cast<Expression*>(&exp);
     if (!expat)
     {
-        getPile().push(*expat);
+        getPile().push(exp);
         getPile().setMessage("Erreur ce n'est pas une expression");
     }
     else
@@ -114,8 +258,8 @@ void Forget::operation()
         }
         else if(getVrx().verifAtomeExistant(s2))
         {
-            Atome& at=getAtm().findAt(s2);  // on cherche l'atome dans l'atome manager
-            getAtm().removeAtome(at);       // on detruit l'atome via l'atomeManager, le destructeur de l'atome s'occupe de détruire son objPile
+            //Atome* at=getAtm().findAt(s2);  // on cherche l'atome dans l'atome manager
+            getAtm().removeAtome(s2);       // on detruit l'atome via l'atomeManager, le destructeur de l'atome s'occupe de détruire son objPile
             delete expat;                   // on detruit l'expression represantant l'atome
         }
         else    // l'expression ne represente pas un atome

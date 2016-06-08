@@ -14,7 +14,7 @@ void Controleur::sentCommande(QString& s)
     ObjectPile* obp=nullptr;
 
     // --- partie operations avancees
-    
+
     if ((op=factoOP.ProductOP(s))!=nullptr) // dans le cas d'un operateur avance
     {
         expAff.setMessage("operation avancee");
@@ -23,10 +23,10 @@ void Controleur::sentCommande(QString& s)
     else if (vrx.verifAtomeExistant(s))
     {
         expAff.setMessage("atome existant");
-        Atome atexist=vrx.getAtm().findAt(s);
-        expAff.push(*atexist.getVal());
+        Atome* atexist=vrx.getAtm().findAt(s);
+        expAff.push(*(atexist->getVal()));
     }
-    else if (vrx.verifAtome(s)) // si c'est pas un atome existant, on le met dans une expression
+    else if (vrx.verifAtome(s) && !vrx.verifOperateurAvance(s)) // si c'est pas un atome existant, on le met dans une expression
     {
         QString s2("\'");
         s2+=s;
@@ -62,11 +62,11 @@ void Controleur::sentCommande(QString& s)
                     if (s=="+") {Nombre* b1=&(a1->operator+(*a2)); expAff.push(*b1); LibMemory::freeMem(a1); LibMemory::freeMem(a2);}
                     if (s=="-") {expAff.push(a1->operator-(*a2)); LibMemory::freeMem(a1); LibMemory::freeMem(a2);}
                     if (s=="*") {expAff.push(a1->operator*(*a2)); LibMemory::freeMem(a1); LibMemory::freeMem(a2);}
-                    if (s=="/") 
-                    {   
+                    if (s=="/")
+                    {
                         Entier* ent=dynamic_cast<Entier*>(a2);
                         if (ent==nullptr || ent->getInt()!=0) {expAff.push(a1->operator/(*a2));} //LibMemory::freeMem(a1); LibMemory::freeMem(a2);
-                        else 
+                        else
                         {
                             expAff.push(*a1);
                             expAff.push(*a2);

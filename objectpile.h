@@ -53,7 +53,7 @@ class Atome : public ObjectPile
 
 public:
 	Atome();
-	Atome(QString& s): ID(s), val(nullptr){}
+	Atome(QString& s, ObjectPile* obp): ID(s), val(obp){}
 	~Atome();
     const QString& getID()const {return ID;}
 	bool operator!=(Atome& a)const {return ID!=a.getID();}
@@ -90,11 +90,11 @@ public:
 	static AtomeManager& getInstance();
 	static void libereInstance();
 
-	Atome& findAt(QString& s);
+	Atome* findAt(QString& s);
 	bool existAt(QString& s);
 
 	void addAtome(Atome& a);
-	void removeAtome (Atome& a);
+	void removeAtome (QString& s);
 
 
 	// ----------- ITERATOR ----------------------------
@@ -118,11 +118,6 @@ public:
     iterator end(){return iterator(tab+nb); }
 
 };
-
-
-
-
-
 
 
 

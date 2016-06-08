@@ -134,24 +134,20 @@ bool VerifRegex::verifOperateurAvanceExp(QString s)
     if(i==s.length()) return false; 
     if(s[i]=='(')
     {
+        if (!verifOperateurAvance(s.mid(0,i))) return false;
         int j=i+1;
         while(i<s.length() && s[i]!=',') i++;
-        if(i==s.length())
+        if(i!=s.length())
         {
-            i=j;
-            while(i<s.length() && s[i]!=')') i++;
-            if((i==s.length()-1) && (verifNombre(s.mid(j, i-j)) || verifAtomeExistant(s.mid(j, i-j)))) return true; else return false;
+            if (!verifNombre(s.mid(j, i-j)) && !verifAtomeExistant(s.mid(j, i-j))) return false;
+            else
+            {
+                j=i+1;
+                while(i<s.length() && s[i]!=')') i++;
+                if((i==s.length()-1) && (verifNombre(s.mid(j, i-j)) || verifAtomeExistant(s.mid(j, i-j)))) return true; else return false;
+            }
         }
-        if (verifNombre(s.mid(j, i-j)) || verifAtomeExistant(s.mid(j, i-j)) )
-        {
-            j=i+1;
-            while(i<s.length() && s[i]!=')') i++;
-            if(i==s.length()) return false;
-            if(i!=(s.length()-1)) return false; // on ne gere pas les expressions avec des parentheses a l'intérieur d'un perateur avancé, la parenthese doit se trouver a la fin
-            if(verifNombre(s.mid(j, i-j)) || verifAtomeExistant(s.mid(j, i-j)) ) return true;
-            return false;
-        }
-        return false;
+        else if (s[i-1]==')' && (verifNombre(s.mid(j, ((i-1)-j) )) || verifAtomeExistant(s.mid(j, ((i-1)-j) )) )) return true; else return false;
     }
     else return false;
 }
@@ -192,7 +188,7 @@ bool VerifRegex::verifExpression(QString s)
             if(verifNombre(s.mid(2, (s.length()-4))) || verifAtomeExistant(s.mid(2, (s.length()-4))) || verifOperateurAvanceExp(s.mid(2,(s.length()-4)))) return true;
             return false;
         }
-        if(verifNombre(s.mid(1, s.length()-2)) || verifAtome(s.mid(2, (s.length()-4))) || verifOperateurAvanceExp(s.mid(1, (s.length()-2)))) return true;
+        if(verifNombre(s.mid(1, s.length()-2))  || verifAtome(s.mid(1, (s.length()-2))) || verifOperateurAvanceExp(s.mid(1, (s.length()-2)))) return true;
         return false;
     }
 
