@@ -58,6 +58,7 @@ public:
     const QString& getID()const {return ID;}
 	bool operator!=(Atome& a)const {return ID!=a.getID();}
 	ObjectPile* getVal() {return val;}
+	void setVal(ObjectPile* v) {val=v;}
 	QString toString()const;
 
 };

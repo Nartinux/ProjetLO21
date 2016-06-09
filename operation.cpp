@@ -14,160 +14,313 @@ Eval::~Eval(){}
 
 void Eval::operation()
 {
-
-    ObjectPile& obp=getPile().top();
+    ObjectPile& obp=expAff.top();
     getPile().pop();
     Expression* exp=dynamic_cast<Expression*>(&obp);
     if (!exp)
     {
-        getPile().push(*exp);
-        getPile().setMessage("Erreur ce n'est pas une expression");
+        expAff.push(obp);
+        expAff.setMessage("Erreur ce n'est pas une expression");
     }
     else
     {
         QString s=exp->getExp();
-        if( (s.indexOf("+")==-1) && (s.indexOf("-")==-1) && (s.indexOf("*")==-1) && (s.indexOf("/")==-1))    // on check si y'a pas d'operateurs -> juste un atome ou un operateur Avance.
+        if(s[1]=='(' && (s[s.length()-2]==')') && s[2]=='-')
         {
-            if ( (s[1]=='(') && (s[s.length()-2]==')') )   // cas ou on a 1 layer de parethèses et pas d'operations simples dedans, type: '(TOTO)'
+            if (vrx.verifNombre(s.mid(2, s.length()-2-2)))
             {
-                s.remove(1,1);
-                s.remove(s.length()-2,1);
-                Expression* express=new Expression(s);
-                expAff.push(*express);
-                operation();            // rappel recursif d'eval dans la fonction
+                Nombre* n=fN.ProductN(s.mid(2, s.length()-2-2));
+                expAff.push(*n);
             }
-            else
+        }
+        else if ( (s[1]=='(') && (s[s.length()-2]==')') )   // si y' des parentheses on les enleve
+        {
+            s.remove(1,1);
+            s.remove(s.length()-2,1);
+            Expression* express=new Expression(s);
+            expAff.push(*express);
+            operation();            // rappel recursif d'eval dans la fonction
+        }
+        else if( (s.indexOf("+")==-1) && (s.indexOf("-")==-1) && (s.indexOf("*")==-1) && (s.indexOf("/")==-1)) 
+        {
+            if(vrx.verifNombre(s.mid(1,(s.length()-2))))
             {
-                if(vrx.verifNombre(s.mid(1,(s.length()-2))))
-                {
-                    Nombre* n=fN.ProductN(s.mid(1, (s.length()-2)));
-                    expAff.push(*n);
-                } 
-                else if (vrx.verifAtomeExistant(s.mid(1, (s.length()-2))))
-                {
-                    Atome* atexist=atm.findAt(s.mid(1, (s.length()-2)));
-                    expAff.push(*(atexist->getVal()));
-                }
-                else if (vrx.verifOperateurAvanceExp(s.mid(1,(s.length()-2))))
-                {
-                    int i=1;
-                    while (i<s.length() && (s[i]>='A') && (s[i]<='Z')) i++;
+                Nombre* n=fN.ProductN(s.mid(1, (s.length()-2)));
+                expAff.push(*n);
+            } 
+            else if (vrx.verifAtomeExistant(s.mid(1, (s.length()-2))))
+            {
+                Atome* atexist=atm.findAt(s.mid(1, (s.length()-2)));
+                expAff.push(*(atexist->getVal()));
+            }
+            else if (vrx.verifOperateurAvanceExp(s.mid(1,(s.length()-2))))
+            {
+                int i=1;
+                while (i<s.length() && (s[i]>='A') && (s[i]<='Z')) i++;
+                FactoryOperateur* fOP=FactoryOperateur::getInstance(expAff);
+                QString opav=s.mid(1, (i-1));     
+                OperateurAvance* op=fOP->ProductOP(opav);
 
-                    FactoryOperateur* fOP=FactoryOperateur::getInstance(expAff);
-                    QString opav=s.mid(1, (i-1));     
-                    OperateurAvance* op=fOP->ProductOP(opav);
-
-                    int j=i+1;
-                    while(i<s.length() && s[i]!=',') i++;
-                    if(i!=s.length())
+                int j=i+1;
+                while(i<s.length() && s[i]!=',') i++;
+                if(i!=s.length())
+                {
+                    if (vrx.verifNombre(s.mid(j, i-j)))
                     {
-                        if (vrx.verifNombre(s.mid(j, i-j)))
+                        Nombre* n=fN.ProductN(s.mid(j, i-j));
+                        expAff.push(*n);
+                    }
+                    if (vrx.verifAtomeExistant(s.mid(j, i-j)))
+                    {
+                        Atome* atexist=atm.findAt(s.mid(j, i-j));
+                        expAff.push(*(atexist->getVal()));
+                    }
+                    j=i+1;
+                    while(i<s.length() && s[i]!=')') i++;
+                    if (vrx.verifNombre(s.mid(j, i-j)))
+                    {
+                        Nombre* n=fN.ProductN(s.mid(j, i-j));
+                        expAff.push(*n); 
+                    }
+                    if (vrx.verifAtomeExistant(s.mid(j, i-j)))
+                    {
+                        Atome* atexist=atm.findAt(s.mid(j, i-j));
+                        expAff.push(*(atexist->getVal()));
+                    }
+                }
+                else 
+                {
+                    if (vrx.verifNombre(s.mid(j, ((i-2)-j) )))
+                    {
+                        Nombre* n=fN.ProductN(s.mid(j,((i-2)-j)));
+                        expAff.push(*n); 
+                    }
+                    if (vrx.verifAtomeExistant(s.mid(j, ((i-2)-j) )))
+                    {
+                        Atome* atexist=atm.findAt(s.mid(j,((i-2)-j)));
+                        expAff.push(*(atexist->getVal()));
+                    }
+                }
+                op->operation();
+            }
+        }
+        else
+        {
+            int j=1;
+            while(s[j]!='(' && j<s.length()-1)
+            { 
+                if (s[j]=='(' && ((s[j-1]>='A' && s[j-1]<='Z') || s[j+1]=='-'))
+                {
+                    while(s[j]!=')' && j<s.length()-1) j++;
+                }
+                j++;
+            }
+            if (j==s.length()-1)         // pas de parentheses
+            {
+                int i=1,j=0,k=1;
+                while (s[i]!='*' && s[i]!='/' && i<s.length()-1 ) i++;
+                if(i==s.length()-1)                     // s'il n'y a pas d'operateur prioritaire * ou /
+                {
+                    i=1;
+                    while ((s[i]!='+' && s[i]!='-') && i<s.length()-1 ) i++;
+                    QString s1=s.left(i);
+                    s1+="\'";
+                    Expression* express1=new Expression(s1);
+                    expAff.push(*express1);
+                    operation();                    // on met la partie gauche dans la pile sous forme d'exp et on l'evalue
+                    QString s2="\'";
+                    s2+=s.right(s.length()-(i+1));
+                    Expression* express2=new Expression(s2);
+                    expAff.push(*express2);
+                    operation();                    // on met la partie droite dans la pile sous forme d'exp et on l'evalue
+
+                    ObjectPile& v2=expAff.top();
+                    expAff.pop();
+                    ObjectPile& v1=expAff.top();
+                    expAff.pop();
+                    Nombre* a1=dynamic_cast<Nombre*>(&v1);
+                    Nombre* a2=dynamic_cast<Nombre*>(&v2);
+                    if (s[i]=='+') expAff.push(a1->operator+(*a2));
+                    if (s[i]=='-') expAff.push(a1->operator-(*a2));
+                }
+                else
+                {
+                    k=i;
+                    while(s[k]!='+' && s[k]!='-' && k>0) k--;
+                    if(k!=0)
+                    {
+                        QString s0=s.left(k);
+                        s0+="\'";
+                        Expression* express0=new Expression(s0);
+                        expAff.push(*express0);
+                        operation();
+                    }
+
+                    QString s1=("\'"+s.mid(k+1,i-(k+1))+"\'");
+                    Expression* express1=new Expression(s1);
+                    expAff.push(*express1);
+                    operation();
+
+                    j=i;
+                    while(s[j]!='+' && s[j]!='-' && j<s.length()-1) j++;
+
+                    QString s3=("\'"+s.mid(i+1,j-(i+1))+"\'");
+                    Expression* express3=new Expression(s3);
+                    expAff.push(*express3);
+                    operation();
+
+                    ObjectPile& v2=expAff.top();
+                    expAff.pop();
+                    ObjectPile& v1=expAff.top();
+                    expAff.pop();
+                    Nombre* a1=dynamic_cast<Nombre*>(&v1);
+                    Nombre* a2=dynamic_cast<Nombre*>(&v2);
+                    if (s[i]=='*') expAff.push(a1->operator*(*a2));
+                    if (s[i]=='/') expAff.push(a1->operator/(*a2));
+
+                    if(k!=0)
+                    {
+                        ObjectPile& v4=expAff.top();
+                        expAff.pop();
+                        ObjectPile& v3=expAff.top();
+                        expAff.pop();
+                        Nombre* a3=dynamic_cast<Nombre*>(&v3);
+                        Nombre* a4=dynamic_cast<Nombre*>(&v4);
+                        if (s[k]=='+') expAff.push(a3->operator+(*a4));
+                        if (s[k]=='-') expAff.push(a3->operator-(*a4));
+                    }
+                    if (j!=s.length()-1)
+                    {
+                        QString s4="\'";
+                        s4+=s.right(s.length()-(j+1));
+                        Expression* express4=new Expression(s4);
+                        expAff.push(*express4);
+                        operation();
+
+                        ObjectPile& v6=expAff.top();
+                        expAff.pop();
+                        ObjectPile& v5=expAff.top();
+                        expAff.pop();
+                        Nombre* a5=dynamic_cast<Nombre*>(&v5);
+                        Nombre* a6=dynamic_cast<Nombre*>(&v6);
+                        if (s[j]=='+') expAff.push(a5->operator+(*a6));
+                        if (s[j]=='-') expAff.push(a5->operator-(*a6));
+                    }
+                }
+            }
+            else    // ya des parentheses
+            {
+                int j=0,k=1,countpo=1, countpf=0;
+                while(s[j]!='(' && j<s.length()-1)
+                {
+                    j++;
+                    if (s[j]=='(' && ((s[j-1]>='A' && s[j-1]<='Z') || s[j+1]=='-'))
+                    {
+                        while(s[j]!=')' && j<s.length()-1) j++;
+                    }
+                }
+                k=j;
+                j++;
+                while (countpo!=countpf) 
+                {
+                    if(s[j]=='(') countpo++;
+                    if(s[j]==')') countpf++;
+                    j++;
+                }
+                if (s[k-1]!='\'')
+                {
+                    if (s[j]=='-' || s[j]=='+' || s[k-1]=='*' || s[k-1]=='/' || j==s.length()-1)
+                    {
+
+                        QString s1=(s.left(k-1)+"\'");
+                        Expression* express1=new Expression(s1);
+                        expAff.push(*express1);
+                        operation();
+
+                        QString s0=("\'"+s.mid(k,j-k)+"\'");
+                        Expression* express0=new Expression(s0);
+                        expAff.push(*express0);
+                        operation();
+
+                        ObjectPile& v2=expAff.top();
+                        expAff.pop();
+                        ObjectPile& v1=expAff.top();
+                        expAff.pop();
+                        Nombre* a1=dynamic_cast<Nombre*>(&v1);
+                        Nombre* a2=dynamic_cast<Nombre*>(&v2);
+                        if (s[k-1]=='+') expAff.push(a1->operator+(*a2));
+                        if (s[k-1]=='-') expAff.push(a1->operator-(*a2));
+                        if (s[k-1]=='*') expAff.push(a1->operator*(*a2));
+                        if (s[k-1]=='/') expAff.push(a1->operator/(*a2));
+
+                        if(j!=s.length()-1)
                         {
-                            Nombre* n=fN.ProductN(s.mid(j, i-j));
-                            expAff.push(*n);
-                        }
-                        if (vrx.verifAtomeExistant(s.mid(j, i-j)))
-                        {
-                            Atome* atexist=atm.findAt(s.mid(j, i-j));
-                            expAff.push(*(atexist->getVal()));
-                        }
-                        j=i+1;
-                        while(i<s.length() && s[i]!=')') i++;
-                        if (vrx.verifNombre(s.mid(j, i-j)))
-                        {
-                            Nombre* n=fN.ProductN(s.mid(j, i-j));
-                            expAff.push(*n); 
-                        }
-                        if (vrx.verifAtomeExistant(s.mid(j, i-j)))
-                        {
-                            Atome* atexist=atm.findAt(s.mid(j, i-j));
-                            expAff.push(*(atexist->getVal()));
+                            QString s2=("\'"+s.right(s.length()-(j+1)));
+                            Expression* express2=new Expression(s2);
+                            expAff.push(*express2);
+                            operation();
+
+                            ObjectPile& v4=expAff.top();
+                            expAff.pop();
+                            ObjectPile& v3=expAff.top();
+                            expAff.pop();
+                            Nombre* a3=dynamic_cast<Nombre*>(&v3);
+                            Nombre* a4=dynamic_cast<Nombre*>(&v4);
+                            if (s[j]=='+') expAff.push(a3->operator+(*a4));
+                            if (s[j]=='-') expAff.push(a3->operator-(*a4));
+                            if (s[j]=='*') expAff.push(a1->operator*(*a2));
+                            if (s[j]=='/') expAff.push(a1->operator/(*a2));
                         }
                     }
-                    else 
+                }
+                else if (s[j]!='\'')
+                {
+                    if (s[j]=='*' || s[j]=='/' || s[k-1]=='+' || s[k-1]=='-' || (k-1)==0)
                     {
-                        if (vrx.verifNombre(s.mid(j, ((i-2)-j) )))
+                        QString s0=("\'"+s.mid(k,j-k)+"\'");
+                        Expression* express0=new Expression(s0);
+                        expAff.push(*express0);
+                        operation();
+
+                        QString s2=("\'"+s.right(s.length()-(j+1)));
+                        Expression* express2=new Expression(s2);
+                        expAff.push(*express2);
+                        operation();
+
+                        ObjectPile& v2=expAff.top();
+                        expAff.pop();
+                        ObjectPile& v1=expAff.top();
+                        expAff.pop();
+                        Nombre* a1=dynamic_cast<Nombre*>(&v1);
+                        Nombre* a2=dynamic_cast<Nombre*>(&v2);
+                        if (s[j]=='+') expAff.push(a1->operator+(*a2));
+                        if (s[j]=='-') expAff.push(a1->operator-(*a2));
+                        if (s[j]=='*') expAff.push(a1->operator*(*a2));
+                        if (s[j]=='/') expAff.push(a1->operator/(*a2));
+
+                        if((k-1)!=0)
                         {
-                            Nombre* n=fN.ProductN(s.mid(j,((i-2)-j)));
-                            expAff.push(*n); 
-                        }
-                        if (vrx.verifAtomeExistant(s.mid(j, ((i-2)-j) )))
-                        {
-                            Atome* atexist=atm.findAt(s.mid(j,((i-2)-j)));
-                            expAff.push(*(atexist->getVal()));
+                            QString s1=(s.left(k-1)+"\'");
+                            Expression* express1=new Expression(s1);
+                            expAff.push(*express1);
+                            operation();
+
+                            ObjectPile& v4=expAff.top();
+                            expAff.pop();
+                            ObjectPile& v3=expAff.top();
+                            expAff.pop();
+                            Nombre* a3=dynamic_cast<Nombre*>(&v3);
+                            Nombre* a4=dynamic_cast<Nombre*>(&v4);
+                            if (s[k-1]=='+') expAff.push(a3->operator+(*a4));
+                            if (s[k-1]=='-') expAff.push(a3->operator-(*a4));
                         }
                     }
-                    op->operation();
                 }
             }
         }
-/*
-        int i=1, j=1;
-        bool ok=true; 
-        
-        while (i<(s.length()-1) && !verifOperateurSimple(s.at(i))) i++;
-        if(i==(s.length()-1) || (i==s.length()-2)) return false;
-        if(s[j]!='(')
-        {
-            if( verifNombre(s.mid(j, i-j)) || verifAtomeExistant(s.mid(j, i-j)) || verifOperateurAvanceExp(s.mid(j, i-j)))
-            {
-                QString s2="'";
-                s2+=s.right(s.length()-(i+1));
-                return verifExpression(s2);
-            }
-            return false;
-        }
-        else if( (s[j]=='(') && (s[i]=='-') && (j==i-1)) // cas type: (-987)
-        {
-            j++;
-            while(s[i]!=')' && i<s.length()) i++;
-            if (i==s.length()) return false; // pas de fin de parenthèse !! -> illegal
-            QString s2=s.mid(j,i-j);
-            ok=verifNombre(s2);
-            i++;
-            if (i==s.length()-1 && ok) return true;
-            s2="'";
-            s2+=s.right(s.length()-(i+1));
-            if(ok) return verifExpression(s2); else return false;
-        }
-        else if (s[j]=='(' && s[i-1]==')')   // cas ou on a 1 layer de parethèses et pas d'operations simples dedans, type: '44*(X)/7'
-        {
-            QString s2="'";
-            s2+=s.mid(j+1,i-2-(j+1));
-            s2+="'";
-            ok=verifExpression(s2); // on rappelle la fonction qui s'arretera au premier if
-            if (i==s.length()-1 && ok) return true;
-            s2="'";
-            s2+=s.right(s.length()-(i+1));
-            if(ok) return verifExpression(s2); else return false;
-        }
-        else if (s[j]=='(' && s[i-1]!=')') // cas d'operations dans les paretheses
-        {
-            int countpo=1; // nb de parentheses ouvrantes decouvertes jusqu'alors
-            int countpf=0; // nb de parentheses fermantes decouvertes jusqu'alors
-            i=j+1;
-            while(countpf!=countpo && i<s.length())
-            {
-                if (s[i]==')') countpf++;
-                if (s[i]=='(') countpo++;
-                i++;
-            }
-            if (i==s.length() || (i==s.length()-3)) return false; // pas de fin de parenthèse ou un unique caractere apresla fin des parentheses qui est juste avant le ' final
-            else
-            {
-                QString s2="'";
-                s2+=s.mid(j+1, (i-1)-(j+1));
-                s2+="'";
-                ok=verifExpression(s2);
-                if (i==s.length()-1 && ok) return true;
-                s2="'";
-                s2+=s.right(s.length()-(i+1));
-                if(ok) return verifExpression(s2); else return false;
-            }
-        }
-        return false;*/
-    }   
+    }
 }
+
 
 
 //------------------------------------------- CLASS STO ---------------------------------------------------------------------------------------------------
@@ -206,17 +359,13 @@ void Sto::operation()
             else if(getVrx().verifAtomeExistant(s2))
             {
                 Atome* at=getAtm().findAt(s2);  // on cherche l'atome dans l'atome manager
-                //delete at.getVal();             // on detruit l'ancienne valeur
-                ObjectPile* obp=at->getVal();
-                obp=&val;                       // on met la valeur du premier objectPile recup, quoi que se soit.
-                //delete expat;                   // on detruit l'expression represantant l'atome
+                at->setVal(&val);                       // on met la valeur du premier objectPile recup, quoi que se soit.
                 getPile().setMessage("atome réevalué");
             }
             else if (getVrx().verifAtome(s2))
             {
                 Atome* a=new Atome(s2,&val);         // on cree un nouvel atome
                 getAtm().addAtome(*a);          // on le met dans AtomeManager
-                //delete expat;                   // on detruit l'expression represantant l'atome
                 getPile().setMessage("atome crée");
             }
             else    // l'expression ne represente pas un atome

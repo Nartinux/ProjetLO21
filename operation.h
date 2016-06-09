@@ -9,7 +9,6 @@
 #include "pile.h"
 #include "verifregex.h"
 #include "factory.h"
-#include "factoryoperateur.h"
 
 
 

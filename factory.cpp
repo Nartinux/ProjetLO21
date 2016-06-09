@@ -30,7 +30,7 @@ ObjectPile* FactoryG::Product (QString s) // besoin de check ici si c'est un op√
     if (s[0]=='\'' && s[1]=='\'') return nullptr;   // cas ou on entre l'expression '' que l'on ne veut pas traiter !
     if (s[0]=='\'' && s[s.length()-1]=='\'') // DANS UNE EXPRESSION ON NE GERE PAS LES MULTIPLICATIONS IMPLICITES tq: 4(32+4) ou 7SIN(8)
     {
-        while ((i=s.indexOf(" "))!=-1) {s.remove(i,1); i++;} // on retire tous les espaces
+        while ((i=s.indexOf(" "))!=-1) s.remove(i,1); i++; // on retire tous les espaces
         i=1;
         while (i<(s.length()-2))
         {

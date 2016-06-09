@@ -178,6 +178,12 @@ bool VerifRegex::verifAtomeExistant(QString s)   // verifie que c'est un atome d
 // ATTENTION : avec les strings .lenght revoie la longueure totale de la chaine ne comptant pas '\0' le denier char de la chaine (excepté \0) est donc longueure -1 !!
 // on ne check pas si y'a des quotes dans la fonction pour pouvoir l'appeler récursivement sur des sous chaines sans avoir a concaténer des quotes ! ce check doit etre fait avant l'appel
 
+
+
+
+
+
+
 bool VerifRegex::verifExpression(QString s)
 {
     if( (s.indexOf("+")==-1) && (s.indexOf("-")==-1) && (s.indexOf("*")==-1) && (s.indexOf("/")==-1))    // on check si y'a pas d'operateurs -> juste un atome ou un operateur Avance.
@@ -241,7 +247,7 @@ bool VerifRegex::verifExpression(QString s)
             if (s[i]=='(') countpo++;
             i++;
         }
-        if (i==s.length() || (i==s.length()-3)) return false; // pas de fin de parenthèse ou un unique caractere apresla fin des parentheses qui est juste avant le ' final
+        if (i==s.length() || (i==s.length()-2)) return false; // pas de fin de parenthèse ou un unique caractere apresla fin des parentheses qui est juste avant le ' final
         else
         {
             QString s2="'";
