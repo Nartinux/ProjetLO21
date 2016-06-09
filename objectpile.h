@@ -39,6 +39,7 @@ public:
 	Programme(QString& s): prg(s) {}
 	~Programme();
 	QString toString()const;
+	const QString getPrg()const {return prg;}
 
 };
 

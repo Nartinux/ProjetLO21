@@ -49,11 +49,7 @@ ObjectPile* FactoryG::Product (QString s) // besoin de check ici si c'est un op√
         }
         if(vrx.verifExpression(s)) return fE.ProductE(s); else return nullptr;
     }
-    if (s[0]=='[' && s[s.length()-1]==']')
-    {
-        while ((i=s.indexOf(" "))!=-1) s.remove(i,1); // on retire tous les espaces
-        /*if(vrx.verifProgramme(s)) return fE.ProductP(s); else*/ return nullptr;
-    }
+    if (vrx.verifProgramme(s)) return fP.ProductP(s);
     if(vrx.verifNombre(s)) return fN.ProductN(s);
     return nullptr;
 }

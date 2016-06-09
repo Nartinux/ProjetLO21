@@ -24,7 +24,24 @@ void Controleur::sentCommande(QString& s)
     {
         expAff.setMessage("atome existant");
         Atome* atexist=vrx.getAtm().findAt(s);
-        expAff.push(*(atexist->getVal()));
+        Expression* a1=dynamic_cast<Expression*>(atexist->getVal());
+        Programme* a3=dynamic_cast<Programme*>(atexist->getVal());
+        if (a1)
+        {
+            expAff.push(*a1);
+            op=factoOP.ProductOP("EVAL");
+            op->operation();
+        }
+        else if (a3)
+        {
+            expAff.push(*a3);
+            op=factoOP.ProductOP("EVAL");
+            op->operation();
+        }
+        else
+        {
+            expAff.push(*(atexist->getVal()));
+        }
     }
     else if (vrx.verifAtome(s) && !vrx.verifOperateurAvance(s)) // si c'est pas un atome existant, on le met dans une expression
     {

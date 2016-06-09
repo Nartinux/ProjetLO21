@@ -238,6 +238,7 @@ void QComputer::envoiCmd(QString s)
 {
     // si c'est une expression on ne check pas si y'a des espaces, ca sera fait apres !
     if(s[0]=='\'' && s[s.length()-1]=='\'') controleur->sentCommande(s); // donc on envoi tout
+    else if(s[0]=='[' && s[s.length()-1]==']') controleur->sentCommande(s);
     else
     {
         // extraction de chaque élément de la ligne
@@ -261,61 +262,50 @@ void QComputer::getNextCommande()
 
 
 
-    int i=0;
+    int i=0,a,b;
     while(i<s.length())
     {
-        while(s[i]!='\'' && i<s.length()) i++;
-        if(i!=s.length())
+        a=s.indexOf('\'');
+        b=s.indexOf('[');
+        if(a<b || (b==-1 && a==-1))
         {
-            envoiCmd(s.left(i));
-            s=s.right(s.length()-i);
-            i=1;
             while(s[i]!='\'' && i<s.length()) i++;
             if(i!=s.length())
             {
-                envoiCmd(s.left(i+1));
-                s=s.right(s.length()-(i+1));
-                i=0;
-            }else {envoiCmd(s); break;}
+                envoiCmd(s.left(i));
+                s=s.right(s.length()-i);
+                i=1;
+                while(s[i]!='\'' && i<s.length()) i++;
+                if(i!=s.length())
+                {
+                    envoiCmd(s.left(i+1));
+                    s=s.right(s.length()-(i+1));
+                    i=0;
+                }else {envoiCmd(s); break;}
 
-        }else {envoiCmd(s); break;}
-    }
-
-
-
-
-
-/*
-    int i=0;
-    while(i<s.length())
-    {
-        while(s[i]!='\'' && i<s.length()) i++;
-        if(i!=s.length())
+            }
+            else {envoiCmd(s); break;}
+        }
+        else
         {
-            envoiCmd(s.left(i));
-            s=s.right(s.length()-i);
-            i=0;
-            while(s[i]!='\'' && i<s.length()) i++;
+            while(s[i]!='[' && i<s.length()) i++;
             if(i!=s.length())
             {
-                envoiCmd(s.left(i+1));
-                s=s.right(s.length()-(i+1));
-                i=0;
-            }else {envoiCmd(s); break;}
+                envoiCmd(s.left(i));
+                s=s.right(s.length()-i);
+                i=1;
+                while(s[i]!=']' && i<s.length()) i++;
+                if(i!=s.length())
+                {
+                    envoiCmd(s.left(i+1));
+                    s=s.right(s.length()-(i+1));
+                    i=0;
+                }else {envoiCmd(s); break;}
 
-        }else {envoiCmd(s); break;}
+            }
+            else {envoiCmd(s); break;}
+        }
     }
-
-*/
-
-
-    //envoiCmd(s);
-
-
-
-
-
-    // ligne commande a zero
     commande->clear();
 }
 

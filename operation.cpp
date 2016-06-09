@@ -19,8 +19,127 @@ void Eval::operation()
     Expression* exp=dynamic_cast<Expression*>(&obp);
     if (!exp)
     {
-        expAff.push(obp);
-        expAff.setMessage("Erreur ce n'est pas une expression");
+        Programme* prg=dynamic_cast<Programme*>(&obp);
+        if (prg)
+        {
+            int i=2;
+            QString s=prg->getPrg();
+            if(s.length()-2==1);    // si le programme nul : [ ] qui est accepté a la verif est entré, on ressort rien (la pile a été épurée de ce progr)
+            else
+            {
+                if(s[2]=='[')
+                {
+                    while(s[i]!=']' && i<s.length()-1) i++;
+                    i++;
+                    QString s2=s.mid(2,i-2);
+                    Programme* prg1=new Programme(s2);
+                    expAff.push(*prg1);
+                    operation();
+
+                    QString s3=("["+s.right(s.length()-i));
+                    Programme* prg2=new Programme(s3);
+                    expAff.push(*prg2);
+                    operation();
+                }
+                else
+                {
+                    while(s[i]!=' ') i++;
+                    QString s2=s.mid(2,i-2);
+
+                    if (vrx.verifNombre(s2))
+                    {
+                        Nombre* n=fN.ProductN(s2);
+                        expAff.push(*n);
+                    }
+                    else if(vrx.verifOperateurSimple(s2))   
+                    {
+                        ObjectPile& v2=expAff.top();
+                        expAff.pop();
+                        ObjectPile& v1=expAff.top();
+                        expAff.pop();
+                        Nombre* a1=dynamic_cast<Nombre*>(&v1);
+                        Nombre* a2=dynamic_cast<Nombre*>(&v2);
+                        if(!a1 || !a2)                  // si c'est pas des nombres
+                        {
+                            expAff.push(v1);
+                            expAff.push(v2);
+                            expAff.setMessage("Erreur programme mal construit");
+                        }
+                        else
+                        {
+                            if (s2=="+") expAff.push(a1->operator+(*a2));
+                            if (s2=="-") expAff.push(a1->operator-(*a2));
+                            if (s2=="*") expAff.push(a1->operator*(*a2));
+                            if (s2=="/") expAff.push(a1->operator/(*a2));
+                        }
+                    }
+                    else if(vrx.verifOperateurAvance(s2))
+                    {
+                        int i=0;
+                        while (i<s.length() && (s2[i]>='A') && (s2[i]<='Z')) i++;
+                        FactoryOperateur* fOP=FactoryOperateur::getInstance(expAff);
+                        QString opav=s2.left(i);     
+                        OperateurAvance* op=fOP->ProductOP(opav);
+
+                        int j=i+1;
+                        while(i<s.length() && s2[i]!=',') i++;
+                        if(i!=s.length())
+                        {
+                            if (vrx.verifNombre(s2.mid(j, i-j)))
+                            {
+                                Nombre* n=fN.ProductN(s2.mid(j, i-j));
+                                expAff.push(*n);
+                            }
+                            if (vrx.verifAtomeExistant(s2.mid(j, i-j)))
+                            {
+                                Atome* atexist=atm.findAt(s2.mid(j, i-j));
+                                expAff.push(*(atexist->getVal()));
+                            }
+                            j=i+1;
+                            while(i<s2.length() && s2[i]!=')') i++;
+                            if (vrx.verifNombre(s2.mid(j, i-j)))
+                            {
+                                Nombre* n=fN.ProductN(s2.mid(j, i-j));
+                                expAff.push(*n); 
+                            }
+                            if (vrx.verifAtomeExistant(s2.mid(j, i-j)))
+                            {
+                                Atome* atexist=atm.findAt(s2.mid(j, i-j));
+                                expAff.push(*(atexist->getVal()));
+                            }
+                        }
+                        else 
+                        {
+                            if (vrx.verifNombre(s2.mid(j,((i-1)-j) )))
+                            {
+                                Nombre* n=fN.ProductN(s2.mid(j,((i-1)-j) ));
+                                expAff.push(*n); 
+                            }
+                            if (vrx.verifAtomeExistant(s2.mid(j,((i-1)-j) )))
+                            {
+                                Atome* atexist=atm.findAt(s2.mid(j,((i-1)-j) ));
+                                expAff.push(*(atexist->getVal()));
+                            }
+                        }
+                        op->operation();
+                    }
+                    else if (vrx.verifAtomeExistant(s2))
+                    {
+                        Atome* atexist=atm.findAt(s2);
+                        expAff.push(*(atexist->getVal()));
+                    }
+                    QString s3=("["+s.right(s.length()-i));
+                    Programme* prg2=new Programme(s3);
+                    expAff.push(*prg2);
+                    operation();
+                }
+            }
+        }
+        else
+        {
+            expAff.push(obp);
+            expAff.setMessage("Erreur ce n'est pas une expression ni un programme");
+        }
     }
     else
     {
@@ -509,3 +628,15 @@ OperateurAvance* FactoryOperateur::ProductOP(QString s)
     }
     else return nullptr;
 }
+
+
+
+
+
+
+
+
+
+
+
+

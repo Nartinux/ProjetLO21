@@ -175,13 +175,6 @@ bool VerifRegex::verifAtomeExistant(QString s)   // verifie que c'est un atome d
     return Atm.existAt(s);
 }
 
-// ATTENTION : avec les strings .lenght revoie la longueure totale de la chaine ne comptant pas '\0' le denier char de la chaine (excepté \0) est donc longueure -1 !!
-// on ne check pas si y'a des quotes dans la fonction pour pouvoir l'appeler récursivement sur des sous chaines sans avoir a concaténer des quotes ! ce check doit etre fait avant l'appel
-
-
-
-
-
 
 
 bool VerifRegex::verifExpression(QString s)
@@ -267,5 +260,34 @@ bool VerifRegex::verifExpression(QString s)
 //on fait pour chaque opérateur.
 
 
-//bool VerifRegex::verifProgramme(QString& s);
+bool VerifRegex::verifProgramme(QString s)
+{
+    if(s.indexOf("[")==0 && s.indexOf(" ")==1 && s.lastIndexOf(" ")==(s.length()-2) && s.lastIndexOf("]")==(s.length()-1))
+    {
+        int i=2;
+        if(s.length()-2==1) return true; // on accepte [ ] pour la recursivite.
+        if(s[2]=='[')
+        {
+            while(s[i]!=']' && i<s.length()-1) i++;
+            if(i==s.length()-1) return false;
+            i++;
+            QString s2=s.mid(2,i-2);
+            if(!verifProgramme(s2)) return false;
+            QString s3=("["+s.right(s.length()-i));
+            return verifProgramme(s3);
+        }
+        else
+        {
+            while(s[i]!=' ' && i<s.length()-1) i++;
+            if(i==s.length()-1) return false;
+            QString s2=s.mid(2,i-2);
+            if (!verifNombre(s2)&&(!verifOperateurSimple(s2))&&(!verifOperateurAvance(s2))&&(!verifAtomeExistant(s2))) return false;
+            else 
+            {
+                QString s3=("["+s.right(s.length()-i));
+                return verifProgramme(s3);
+            }
+        }
+    }return false;
+}
 
