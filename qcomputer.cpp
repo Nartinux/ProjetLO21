@@ -351,7 +351,7 @@ FenVar::FenVar(): atm(AtomeManager::getInstance())
     hori2->addWidget(tabvar);
     verti->addLayout(hori1);
     verti->addLayout(hori2);
-    corps->addWidget(tabvar);
+    corps->addLayout(verti);
     setLayout(corps);
 
     connect(refresh, SIGNAL(clicked()), this, SLOT(afficherAtm()));
@@ -372,19 +372,34 @@ FenVar::FenVar(): atm(AtomeManager::getInstance())
 
 void FenVar::afficherAtm()
 {
-    // effacer tout
+    int nbRow=tabvar->rowCount();
+    tabvar->setRowCount(atm.getNb());
+
+    // ajout des QTableWidgetItem manquant
+    unsigned int i = nbRow;
+    for (AtomeManager::iterator it=(atm.begin()+(nbRow-1)); it!=atm.end() && i < (atm.getNb()-nbRow); ++it,++i)
+    {
+        tabvar->setItem(i,0,new QTableWidgetItem((*it).toString()));
+        tabvar->setItem(i,1,new QTableWidgetItem((*it).getVal()->toString()));
+    }
+    
+/*
+    // effacer tout(atm.getNb()-nbRow)
     for (unsigned int i=0; i<atm.getNb();i++)
     {
-        tabvar->item(i-1,0)->setText("");
-        tabvar->item(i-1,1)->setText("");
+        tabvar->item(i,0)->setText("");
+        tabvar->item(i,1)->setText("");
     }
+
+
     // mettre à jour
     unsigned int nb = 0;
     for (AtomeManager::iterator it=atm.begin(); it!=atm.end() && nb < atm.getNb(); ++it,++nb)
     {
         tabvar->item(nb,0)->setText((*it).toString());
         tabvar->item(nb,1)->setText((*it).getVal()->toString());
-    }  
+    }*/
+
 }
 
 /*

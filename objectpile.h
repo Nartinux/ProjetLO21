@@ -108,6 +108,11 @@ public:
 		iterator(Atome* a): curs(a){}
         friend class AtomeManager;
 	public:
+		iterator& operator+(int k)
+		{
+			curs+=k;
+			return *this;
+		}
 		iterator& operator++()
 		{
 			curs++;
