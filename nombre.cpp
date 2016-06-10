@@ -75,7 +75,7 @@ Nombre& Entier::operator/(Nombre& a)
 
     Entier* a4=dynamic_cast<Entier*>(&a);
     Rationnel* re=new Rationnel(*this,*a4);
-    return *re;
+    return re->simplificationExt();
 }
 
 Nombre& Entier::neg()

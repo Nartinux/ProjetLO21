@@ -71,7 +71,6 @@ public:
 };
 
 
-
 // ------------------------------------------------------ CLASS MODULO ------------------------------------------------------------------------
 
 
@@ -87,6 +86,82 @@ public:
 Entier& modulo(Entier& a,Entier& b);
 Entier& diveucli(Entier& a,Entier& b);
 
+// ------------------------------------------------------ CLASS DIV ------------------------------------------------------------------------
+
+
+class Diveucli : public OperateurAvance
+{
+public:
+    Diveucli(Pile& p): OperateurAvance(p) {}
+    ~Diveucli();
+    void operation();
+};
+
+// ------------------------------------------------------ CLASS NUM ------------------------------------------------------------------------
+
+
+class Numerateur : public OperateurAvance
+{
+public:
+    Numerateur(Pile& p): OperateurAvance(p) {}
+    ~Numerateur();
+    void operation();
+};
+
+// ------------------------------------------------------ CLASS DEN ------------------------------------------------------------------------
+
+
+class Denominateur : public OperateurAvance
+{
+public:
+    Denominateur(Pile& p): OperateurAvance(p) {}
+    ~Denominateur();
+    void operation();
+};
+
+// ------------------------------------------------------ CLASS $ ------------------------------------------------------------------------
+
+
+class Operateur$ : public OperateurAvance
+{
+public:
+    Operateur$(Pile& p): OperateurAvance(p) {}
+    ~Operateur$();
+    void operation();
+};
+
+// ------------------------------------------------------ CLASS RE ------------------------------------------------------------------------
+
+
+class PartieReelle : public OperateurAvance
+{
+public:
+    PartieReelle(Pile& p): OperateurAvance(p) {}
+    ~PartieReelle();
+    void operation();
+};
+
+// ------------------------------------------------------ CLASS IM ------------------------------------------------------------------------
+
+
+class PartieIm : public OperateurAvance
+{
+public:
+    PartieIm(Pile& p): OperateurAvance(p) {}
+    ~PartieIm();
+    void operation();
+};
+
+// ------------------------------------------------------ CLASS = ------------------------------------------------------------------------
+
+
+class Egal : public OperateurAvance
+{
+public:
+    Egal(Pile& p): OperateurAvance(p) {}
+    ~Egal();
+    void operation();
+};
 
 
 

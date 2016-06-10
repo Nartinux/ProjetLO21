@@ -93,7 +93,7 @@ public:
 	static AtomeManager& getInstance();
 	static void libereInstance();
 
-	Atome* findAt(QString& s);
+    Atome* findAt(QString s);
 	bool existAt(QString& s);
 
 	void addAtome(Atome& a);
@@ -119,7 +119,7 @@ public:
 			return *this;
 		}
         Atome& operator*()const{return *curs;}
-		bool operator!=(iterator& it)const {return it.getCurs()!=curs;}
+        bool operator!=(iterator it)const {return it.getCurs()!=curs;}
 		Atome* getCurs()const {return curs;}
 	};
     iterator begin(){return iterator(tab); }

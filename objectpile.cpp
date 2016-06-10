@@ -82,7 +82,7 @@ void AtomeManager::removeAtome(QString& s)
 	nb--;
 }
 
-Atome* AtomeManager::findAt(QString& s)
+Atome* AtomeManager::findAt(QString s)
 {
 	unsigned int i=0;
 	//while(i<nb && tab[i].getID()!=s) i++;
