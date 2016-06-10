@@ -89,6 +89,7 @@ class AtomeManager		//singleton
 
 public:
 
+	const unsigned int getNb()const {return nb;}
 	static AtomeManager& getInstance();
 	static void libereInstance();
 

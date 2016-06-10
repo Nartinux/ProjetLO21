@@ -16,14 +16,55 @@
 #include "computer.h"
 
 
+//----------------------------------------------------------- CLASS FENVAR --------------------------------------------------------------------------------------
 
-class QLineEditable : public QLineEdit{     //QlineEditable est un QlineEdit avec un slot "addtext" en plus pour permettre au pavé virtuel d'écrire dedans
+class FenVar : public QWidget
+{
+    Q_OBJECT
+    AtomeManager& atm;
+    QTableWidget* tabvar;
+    QVBoxLayout* corps;
+    QPushButton* refresh;
+    QVBoxLayout* verti;
+    QHBoxLayout* hori1;
+    QHBoxLayout* hori2;
+    
+    FenVar();
+    ~FenVar();
+    FenVar(const FenVar& fv);
+    FenVar& operator=(const FenVar& fv);
+
+    struct Handler {
+        FenVar* instance;
+        Handler(): instance(nullptr){}
+        ~Handler(){delete instance;}
+    };
+    static Handler handler;
+
+public:
+
+    static FenVar& getInstance();
+    static void libereInstance();
+    
+public slots:
+    void afficherAtm();
+};
+
+
+//----------------------------------------------------------- CLASS QLineEditable --------------------------------------------------------------------------------------
+
+
+class QLineEditable : public QLineEdit      //QlineEditable est un QlineEdit avec un slot "addtext" en plus pour permettre au pavé virtuel d'écrire dedans
+{
     Q_OBJECT
 public:
     QLineEditable(QWidget *parent = Q_NULLPTR) : QLineEdit(parent){}
 public slots:
     void addText(const QString& s);
 };
+
+
+//----------------------------------------------------------- CLASS QComputer --------------------------------------------------------------------------------------
 
 class QComputer : public QWidget
 {
@@ -89,6 +130,7 @@ public slots:
     void envoiCmd(QString s);
     void refresh();
     void getNextCommande();
+    void ouvrirFenVar();
 };
 
 

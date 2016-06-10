@@ -45,8 +45,6 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     butRe = new QPushButton("RE", this);
     butIm= new QPushButton("IM", this);
     submit= new QPushButton("Enter",this);
-
-    // vue atomemanager
     vueatm= new QPushButton("Variables stokées",this);
 
     but0->setCursor(Qt::PointingHandCursor);
@@ -63,9 +61,6 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     butMult->setCursor(Qt::PointingHandCursor);
     butDiv->setCursor(Qt::PointingHandCursor);
     butSub->setCursor(Qt::PointingHandCursor);
-
-    //vue atm
-    //vueatm->setCursor(Qt::PointingHandCursor);
 
     hori1 = new QHBoxLayout;
     hori2 = new QHBoxLayout;
@@ -119,8 +114,9 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     pave->addLayout(verti1);
     pave->addLayout(verti2);
     pave->addLayout(verti3);
+    verti4->addLayout(pave);
     verti4->addLayout(hori8);   // ici
-    verti4->addLayout(pave);    // la
+        // la
 
 
     // positionner les objets sur la fenetre
@@ -168,6 +164,9 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     connect(butDivEnt, SIGNAL(clicked()), mapper, SLOT(map()));
     mapper->setMapping(butDivEnt, "DIV");
 
+
+    connect(vueatm, SIGNAL(clicked()), this, SLOT(ouvrirFenVar()));
+
     connect(submit, SIGNAL(clicked()),this,SLOT(getNextCommande()));
 
 
@@ -211,6 +210,9 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     commande->setFocus();
 }
 
+
+
+
 void QLineEditable::addText(const QString& s) //slot "addtext" de commande. Prend en argument le texte du bouton cliqué et l'écrit dans la commande
 {
     QString c = this->text();
@@ -230,7 +232,6 @@ void QComputer::refresh()
     // mettre à jour
     unsigned int nb = 0;
     for (Pile::iterator it=pile->begin(); it!=pile->end() && nb<pile->getNbItemsToAffiche();++it,++nb)
-
 		vuePile->item(pile->getNbItemsToAffiche()-1-nb,0)->setText((*it).toString());
 }
 
@@ -310,15 +311,90 @@ void QComputer::getNextCommande()
 }
 
 
+void QComputer::ouvrirFenVar()
+{
+    FenVar& fv= FenVar::getInstance();
+    fv.show();
+}
 
 
 
+//----------------------------------------------------------- CLASS FENVAR --------------------------------------------------------------------------------------
+
+FenVar::~FenVar() {}
+
+FenVar::Handler FenVar::handler=FenVar::Handler();
+
+FenVar& FenVar::getInstance()
+{
+    if(handler.instance==nullptr){handler.instance= new FenVar();}
+    return *handler.instance;
+}
+
+void FenVar::libereInstance()
+{
+    if (handler.instance == nullptr) throw ComputerException("on peut pas liberer une instance si elle est pas cree");
+    delete handler.instance;
+    handler.instance=nullptr;
+}
+
+FenVar::FenVar(): atm(AtomeManager::getInstance())
+{
+    corps=new QVBoxLayout(this);
+    tabvar=new QTableWidget(atm.getNb(),2,this);
+    refresh =new QPushButton("Refresh", this);
+    verti= new QVBoxLayout;
+    hori1 = new QHBoxLayout;
+    hori2 = new QHBoxLayout;
+    
+    hori1->addWidget(refresh);
+    hori2->addWidget(tabvar);
+    verti->addLayout(hori1);
+    verti->addLayout(hori2);
+    corps->addWidget(tabvar);
+    setLayout(corps);
+
+    connect(refresh, SIGNAL(clicked()), this, SLOT(afficherAtm()));
+
+    this->setWindowTitle("UTComputer - Vue variables");
+    this->setMinimumSize(400,120);
+
+    unsigned int nb = 0;
+    for (AtomeManager::iterator it=atm.begin(); it!=atm.end() && nb < atm.getNb(); ++it,++nb)
+    {
+        tabvar->setItem(nb,0,new QTableWidgetItem((*it).toString()));
+        tabvar->setItem(nb,1,new QTableWidgetItem((*it).getVal()->toString()));
+    }
+    tabvar->setStyleSheet("background: pink; color: green");
+    tabvar->verticalHeader()->setStyleSheet("color: green");
+}
 
 
+void FenVar::afficherAtm()
+{
+    // effacer tout
+    for (unsigned int i=0; i<atm.getNb();i++)
+    {
+        tabvar->item(i-1,0)->setText("");
+        tabvar->item(i-1,1)->setText("");
+    }
+    // mettre à jour
+    unsigned int nb = 0;
+    for (AtomeManager::iterator it=atm.begin(); it!=atm.end() && nb < atm.getNb(); ++it,++nb)
+    {
+        tabvar->item(nb,0)->setText((*it).toString());
+        tabvar->item(nb,1)->setText((*it).getVal()->toString());
+    }  
+}
 
-
-
-
-
-
-
+/*
+    for (unsigned int i=atm.getNb(); i>0; i--)
+    {
+        tabvar->setItem(i-1,0,new QTableWidgetItem(""));
+    }
+for (AtomeManager::iterator it=atm.begin(); it!=atm.end() && nb < atm.getNb(); ++it,++nb)
+    {
+        tabvar->setItem(i-1,0,new QTableWidgetItem((*it).toString()));
+        tabvar->setItem(i-1,1,new QTableWidgetItem((*it).getVal()->toString()));
+    }
+    */
