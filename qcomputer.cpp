@@ -10,7 +10,7 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     factn = &FactoryN::getInstance();
     vrx = &VerifRegex::getInstance();
     factoop = FactoryOperateur::getInstance(*pile);     // la pile est pas en singleton, et il faut qu'ils aient la meme
-    controleur=new Controleur(*pile, *vrx, *factoop, *factg, *factp, *facte, *factn); 
+    controleur=new Controleur(*pile, *vrx, *factoop, *factg, *factp, *facte, *factn);
     message=new QLineEdit(this);
     vuePile=new QTableWidget(pile->getNbItemsToAffiche(),1,this);
     commande = new QLineEditable(this);
@@ -97,7 +97,7 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     hori7->addWidget(but$);
     hori7->addWidget(butRe);
     hori7->addWidget(butIm);
-    hori8->addWidget(submit);   // enter 
+    hori8->addWidget(submit);   // enter
     hori8->addWidget(vueatm);   // vue atm
     verti1->addLayout(hori1);
     verti1->addLayout(hori2);
@@ -232,7 +232,7 @@ void QComputer::refresh()
     // mettre à jour
     unsigned int nb = 0;
     for (Pile::iterator it=pile->begin(); it!=pile->end() && nb<pile->getNbItemsToAffiche();++it,++nb)
-		vuePile->item(pile->getNbItemsToAffiche()-1-nb,0)->setText((*it).toString());
+        vuePile->item(pile->getNbItemsToAffiche()-1-nb,0)->setText((*it).toString());
 }
 
 void QComputer::envoiCmd(QString s)
@@ -346,7 +346,7 @@ FenVar::FenVar(): atm(AtomeManager::getInstance())
     verti= new QVBoxLayout;
     hori1 = new QHBoxLayout;
     hori2 = new QHBoxLayout;
-    
+
     hori1->addWidget(refresh);
     hori2->addWidget(tabvar);
     verti->addLayout(hori1);
@@ -377,21 +377,21 @@ void FenVar::afficherAtm()
 
     // ajout des QTableWidgetItem manquant
     unsigned int i = nbRow;
-    for (AtomeManager::iterator it=(atm.begin()+(nbRow-1)); it!=atm.end() && i < (atm.getNb()-nbRow); ++it,++i)
+
+    // effacer tout(atm.getNb()-nbRow)
+    for (unsigned int i=0; i<atm.getNb();i++)
+    {
+        delete tabvar->item(i,0); //->setText("");
+        delete tabvar->item(i,1); //)->setText("");
+    }
+    i=0;
+    for (AtomeManager::iterator it=(atm.begin()/*+(nbRow-1)*/); it!=atm.end() && i < (atm.getNb()/*-nbRow*/); ++it,++i)
     {
         tabvar->setItem(i,0,new QTableWidgetItem((*it).toString()));
         tabvar->setItem(i,1,new QTableWidgetItem((*it).getVal()->toString()));
     }
-    
+
 /*
-    // effacer tout(atm.getNb()-nbRow)
-    for (unsigned int i=0; i<atm.getNb();i++)
-    {
-        tabvar->item(i,0)->setText("");
-        tabvar->item(i,1)->setText("");
-    }
-
-
     // mettre à jour
     unsigned int nb = 0;
     for (AtomeManager::iterator it=atm.begin(); it!=atm.end() && nb < atm.getNb(); ++it,++nb)
@@ -412,4 +412,4 @@ for (AtomeManager::iterator it=atm.begin(); it!=atm.end() && nb < atm.getNb(); +
         tabvar->setItem(i-1,0,new QTableWidgetItem((*it).toString()));
         tabvar->setItem(i-1,1,new QTableWidgetItem((*it).getVal()->toString()));
     }
-    */
+*/
