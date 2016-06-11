@@ -1,5 +1,9 @@
 #include "qcomputer.h"
 
+ 
+using namespace std;
+
+
 QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
 {
     //creer les objets
@@ -206,9 +210,46 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     // message de bienvenue
     pile->setMessage("Bienvenue");
 
+
+    // lecture du fichier de sauvegardes des variables (atomes)
+    QFile save("save_var.txt");
+    if(save.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QString line;
+        while(!save.atEnd())
+        {
+            line=save.readLine();
+            getNextCommande(line);
+        }
+        save.close();
+    }
+
     // focus à la barre de commande
     commande->setFocus();
 }
+
+
+
+
+QComputer::~QComputer()
+{
+    QFile save("save_var.txt");
+    if(save.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        QTextStream flux(&save);
+        AtomeManager& atm=AtomeManager::getInstance();
+
+        for (AtomeManager::iterator it=atm.begin(); it!=atm.end(); ++it)
+        {
+            flux<<(*it).toString()<<" "<<(*it).getVal()->toString()<<" STO \n";
+        }
+        save.close();
+    }
+}
+
+
+
+
 
 
 
@@ -253,6 +294,61 @@ void QComputer::envoiCmd(QString s)
         } while (com!="");
     }
 }
+
+
+void QComputer::getNextCommande(QString s)
+{
+    pile->setMessage("");
+
+    int i=0,a,b;
+    while(i<s.length())
+    {
+        a=s.indexOf('\'');
+        b=s.indexOf('[');
+        if(a<b || (b==-1 && a==-1))
+        {
+            while(s[i]!='\'' && i<s.length()) i++;
+            if(i!=s.length())
+            {
+                envoiCmd(s.left(i));
+                s=s.right(s.length()-i);
+                i=1;
+                while(s[i]!='\'' && i<s.length()) i++;
+                if(i!=s.length())
+                {
+                    envoiCmd(s.left(i+1));
+                    s=s.right(s.length()-(i+1));
+                    i=0;
+                }else {envoiCmd(s); break;}
+
+            }
+            else {envoiCmd(s); break;}
+        }
+        else
+        {
+            while(s[i]!='[' && i<s.length()) i++;
+            if(i!=s.length())
+            {
+                envoiCmd(s.left(i));
+                s=s.right(s.length()-i);
+                i=1;
+                while(s[i]!=']' && i<s.length()) i++;
+                if(i!=s.length())
+                {
+                    envoiCmd(s.left(i+1));
+                    s=s.right(s.length()-(i+1));
+                    i=0;
+                }else {envoiCmd(s); break;}
+
+            }
+            else {envoiCmd(s); break;}
+        }
+    }
+    commande->clear();
+}
+
+
+
 
 void QComputer::getNextCommande()
 {
@@ -355,6 +451,7 @@ FenVar::FenVar(): atm(AtomeManager::getInstance())
     setLayout(corps);
 
     connect(refresh, SIGNAL(clicked()), this, SLOT(afficherAtm()));
+    //connect(tabvar, SIGNAL(cellPressed(int row, int column)), this, SLOT(modifAtm(int r, int c)));
 
     this->setWindowTitle("UTComputer - Vue variables");
     this->setMinimumSize(400,120);
@@ -398,18 +495,37 @@ void FenVar::afficherAtm()
     {
         tabvar->item(nb,0)->setText((*it).toString());
         tabvar->item(nb,1)->setText((*it).getVal()->toString());
-    }*/
+    }
+*/
 
 }
 
-/*
-    for (unsigned int i=atm.getNb(); i>0; i--)
+void FenVar::modifAtm(int r, int c)
+{
+    throw("lol");
+    if (c==1)
     {
-        tabvar->setItem(i-1,0,new QTableWidgetItem(""));
+        QString s=tabvar->item(r,c)->text();
+        FactoryG& fG = FactoryG::getInstance();
+        ObjectPile* obp=nullptr;
+
+        if ((obp=fG.Product("35"))!=nullptr)  // si c'est un objectPile autre que atome
+        {
+            QString idAt=tabvar->item(r,0)->text();
+            Atome* at=atm.findAt(idAt);
+            at->setVal(obp);
+        }
     }
-for (AtomeManager::iterator it=atm.begin(); it!=atm.end() && nb < atm.getNb(); ++it,++nb)
+    /*else    // donc c==0
     {
-        tabvar->setItem(i-1,0,new QTableWidgetItem((*it).toString()));
-        tabvar->setItem(i-1,1,new QTableWidgetItem((*it).getVal()->toString()));
-    }
-*/
+        QString s=tabvar->item(r,c)->text();
+        VerifRegex& vrx = VerifRegex::getInstance();
+
+        if (vrx.verifAtome(s) && !(vrx.verifAtomeExistant(s)))  // si c'est un nouvel identifiant d'atome non existant
+        {
+            QString idAt=tabvar->item(r,c)->text();
+            Atome* at=atm.findAt(idAt);
+            at->setID(s);
+        }
+    }*/
+}

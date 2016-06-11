@@ -2,7 +2,8 @@
 #define QCOMPUTER_H
 
 
-
+#include <QFile>
+#include <QTextStream> // Flux sortant du fichier
 #include <QWidget>
 #include <QLineEdit>
 #include <QTextEdit>
@@ -48,6 +49,7 @@ public:
     
 public slots:
     void afficherAtm();
+    void modifAtm(int r, int c);
 };
 
 
@@ -126,10 +128,12 @@ class QComputer : public QWidget
 
 public:
     explicit QComputer(QWidget *parent = 0);
+    ~QComputer();
 public slots:
     void envoiCmd(QString s);
     void refresh();
     void getNextCommande();
+    void getNextCommande(QString s);
     void ouvrirFenVar();
 };
 

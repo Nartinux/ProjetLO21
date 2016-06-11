@@ -891,10 +891,75 @@ void Egal::operation()
     }
 }
 
+// ------------------------------------------------------ CLASS DROP ------------------------------------------------------------------------
+
+Drop::~Drop(){}
+
+void Drop::operation()
+{
+    if (expAff.taille()>=1)
+    {
+        ObjectPile& obp=expAff.top();
+        expAff.pop();
+        delete &obp;
+    }
+    else expAff.setMessage("necessite un argument dans la pile"); 
+}
 
 
+// ------------------------------------------------------ CLASS DUP ------------------------------------------------------------------------
+
+Dup::~Dup(){}
+
+void Dup::operation()
+{
+    if (expAff.taille()>=1)
+    {
+        ObjectPile& obp=expAff.top();
+        expAff.pop();
+        expAff.push(obp);
+        expAff.push(obp);
+    }
+    else expAff.setMessage("necessite un argument dans la pile"); 
+}
 
 
+// ------------------------------------------------------ CLASS SWAP ------------------------------------------------------------------------
+
+Swap::~Swap(){}
+
+void Swap::operation()
+{
+    if (expAff.taille()>=2)
+    {
+        ObjectPile& obp1=expAff.top();
+        expAff.pop();
+        ObjectPile& obp2=expAff.top();
+        expAff.pop();
+        expAff.push(obp1);
+        expAff.push(obp2);
+    }
+    else expAff.setMessage("necessite 2 arguments dans la pile"); 
+}
+
+
+// ------------------------------------------------------ CLASS CLEAR ------------------------------------------------------------------------
+
+Clear::~Clear(){}
+
+void Clear::operation()
+{
+    if (expAff.taille()==0) expAff.setMessage("no need for it"); 
+    else
+    {
+        while(!expAff.estVide())
+        {
+            ObjectPile& obp=expAff.top();
+            expAff.pop();
+            delete &obp;
+        }
+    }
+}
 
 // ------------------------------------------------------ CLASS FACTORYOPERATEUR ------------------------------------------------------------------------
 
@@ -964,6 +1029,22 @@ OperateurAvance* FactoryOperateur::ProductOP(QString s)
         else if (s=="=")
         {
             return new Egal(pil);
+        }
+        else if (s=="DUP")
+        {
+            return new Dup(pil);
+        }
+        else if (s=="DROP")
+        {
+            return new Drop(pil);
+        }
+        else if (s=="SWAP")
+        {
+            return new Swap(pil);
+        }
+        else if (s=="CLEAR")
+        {
+            return new Clear(pil);
         }
         else return nullptr;
     }

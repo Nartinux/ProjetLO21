@@ -164,6 +164,50 @@ public:
 };
 
 
+// ------------------------------------------------------ CLASS DUP ------------------------------------------------------------------------
+
+
+class Dup : public OperateurAvance
+{
+public:
+    Dup(Pile& p): OperateurAvance(p) {}
+    ~Dup();
+    void operation();
+};
+
+
+// ------------------------------------------------------ CLASS DROP ------------------------------------------------------------------------
+
+
+class Drop : public OperateurAvance
+{
+public:
+    Drop(Pile& p): OperateurAvance(p) {}
+    ~Drop();
+    void operation();
+};
+
+// ------------------------------------------------------ CLASS DROP ------------------------------------------------------------------------
+
+
+class Swap : public OperateurAvance
+{
+public:
+    Swap(Pile& p): OperateurAvance(p) {}
+    ~Swap();
+    void operation();
+};
+
+// ------------------------------------------------------ CLASS CLEAR ------------------------------------------------------------------------
+
+
+class Clear : public OperateurAvance
+{
+public:
+    Clear(Pile& p): OperateurAvance(p) {}
+    ~Clear();
+    void operation();
+};
 
 // ------------------------------------------------------ CLASS FACTORYOPERATEUR ------------------------------------------------------------------------
 

@@ -60,6 +60,7 @@ public:
 	bool operator!=(Atome& a)const {return ID!=a.getID();}
 	ObjectPile* getVal() {return val;}
 	void setVal(ObjectPile* v) {val=v;}
+	void setID (QString s) {ID=s;}
 	QString toString()const;
 
 };
