@@ -961,6 +961,17 @@ void Clear::operation()
     }
 }
 
+
+// ------------------------------------------------------ CLASS UNDO ------------------------------------------------------------------------
+
+Undo::~Undo(){}
+
+void Undo::operation()
+{
+    //pm.restore(expAff);
+    expAff.setMessage("l'operation ne fonctionne pas");
+}
+
 // ------------------------------------------------------ CLASS FACTORYOPERATEUR ------------------------------------------------------------------------
 
 
@@ -1045,6 +1056,10 @@ OperateurAvance* FactoryOperateur::ProductOP(QString s)
         else if (s=="CLEAR")
         {
             return new Clear(pil);
+        }
+        else if (s=="UNDO")
+        {
+            return new Undo(pil);
         }
         else return nullptr;
     }

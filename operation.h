@@ -209,6 +209,24 @@ public:
     void operation();
 };
 
+
+// ------------------------------------------------------ CLASS UNDO ------------------------------------------------------------------------
+
+
+class Undo : public OperateurAvance
+{
+    PileMemento& pm;
+public:
+    Undo(Pile& p): OperateurAvance(p), pm(PileMemento::getInstance()) {}
+    ~Undo();
+    void operation();
+};
+
+
+
+
+
+
 // ------------------------------------------------------ CLASS FACTORYOPERATEUR ------------------------------------------------------------------------
 
 

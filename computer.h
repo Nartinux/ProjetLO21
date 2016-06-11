@@ -28,7 +28,15 @@ class Controleur
     Pile& expAff;
     VerifRegex& vrx;
 public:
-    Controleur(Pile& p, VerifRegex& v,FactoryOperateur& fop, FactoryG& fg, FactoryP& fp, FactoryE& fe, FactoryN& fn):
+    /*!
+     *  \brief Constructeur
+     *
+     *  Constructeur de la classe Controleur
+     *  c'est cool
+     *  
+     * 
+     */
+    Controleur(Pile& p, VerifRegex& v, FactoryOperateur& fop, FactoryG& fg, FactoryP& fp, FactoryE& fe, FactoryN& fn):
     expAff(p), vrx(v), factoOP(fop), factoG(fg), factoP(fp), factoE(fe), factoN(fn) {}
 
     void sentCommande( QString& c);
