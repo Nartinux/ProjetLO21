@@ -13,6 +13,9 @@ void Pile::push(ObjectPile &e){
     ob[nb]=&e;
     nb++;
     modificationEtat();
+    Memento* mem= new Memento(ob, nb, nbMax,message, nbAffiche);
+    PileMemento& pm=PileMemento::getInstance();
+    pm.push(*mem);
 }
 
 
@@ -45,3 +48,48 @@ ObjectPile& Pile::top() const {
 }
 
 
+//---------------------------------- CLASS PILE::PILEMEMENTO ------------------------------------------------------------------------------------------------
+
+void PileMemento::agrandissementCapacite()
+{
+    Memento** newtab=new Memento*[nbMax+10];
+    for(unsigned int i=0; i<nb; i++) newtab[i]=memp[i];
+    Memento** old=memp;
+    memp=newtab;
+    nbMax=+10;
+    delete[] old;
+}
+
+PileMemento::Handler PileMemento::handler=PileMemento::Handler();
+
+PileMemento& PileMemento::getInstance()
+{
+    if(handler.instance==nullptr){handler.instance= new PileMemento;}
+    return *handler.instance;
+}
+
+void PileMemento::libereInstance()
+{
+    if (handler.instance == nullptr) throw ComputerException("on peut pas liberer une instance si elle est pas cree");
+    delete handler.instance;
+    handler.instance=nullptr;
+}
+
+
+
+
+void PileMemento::push(Memento &mem){
+    if (nb==nbMax) agrandissementCapacite();
+    memp[nb]=&mem;
+    nb++;
+}
+
+
+Memento& PileMemento::pop()
+{
+    if (nb==0) throw ComputerException("aucune expression sur la PileMemento");
+    Memento& memret=*(memp[nb-1]);
+    nb--;
+    memp[nb]=nullptr;
+    return memret;
+}
