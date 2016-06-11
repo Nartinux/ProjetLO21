@@ -574,6 +574,7 @@ void Modulo::operation()
             expAff.setMessage("Erreur : le modulo n'est définis que pour des nombres");
         }
     }
+    else expAff.setMessage("Erreur : Pas assez d'arguments");
 }
 
 
@@ -614,6 +615,7 @@ void Diveucli::operation()
             expAff.setMessage("Erreur : la division euclidienne n'est définis que pour des nombres entiers");
         }
     }
+    else expAff.setMessage("Erreur : Pas assez d'arguments");
 }
 
 // ------------------------------------------------------ CLASS NUM ------------------------------------------------------------------------
@@ -646,6 +648,7 @@ void Numerateur::operation()
             expAff.setMessage("Erreur : la fonction num n'est définis que pour des nombres rationnels");
         }
     }
+    else expAff.setMessage("Erreur : Pas assez d'arguments");
 }
 
 // ------------------------------------------------------ CLASS DEN ------------------------------------------------------------------------
@@ -678,6 +681,7 @@ void Denominateur::operation()
             expAff.setMessage("Erreur : la fonction DEN n'est définis que pour des nombres rationnels");
         }
     }
+    else expAff.setMessage("Erreur : Pas assez d'arguments");
 }
 
 
@@ -687,7 +691,7 @@ Operateur$::~Operateur$(){}
 
 void Operateur$::operation()
 {
-    if (expAff.taille()>=1)
+    if (expAff.taille()>=2)
     {
         ObjectPile& v2=expAff.top();
         expAff.pop();
@@ -725,6 +729,7 @@ void Operateur$::operation()
             expAff.setMessage("Erreur : la construction d'un complexe n'est définis que pour des nombres");
         }
     }
+    else expAff.setMessage("Erreur : Pas assez d'arguments");
 }
 
 // ------------------------------------------------------ CLASS RE ------------------------------------------------------------------------
@@ -757,6 +762,7 @@ void PartieReelle::operation()
             expAff.setMessage("Erreur : la fonction RE n'est définis que pour des nombres");
         }
     }
+    else expAff.setMessage("Erreur : Pas assez d'arguments");
 }
 
 // ------------------------------------------------------ CLASS IM ------------------------------------------------------------------------
@@ -789,6 +795,7 @@ void PartieIm::operation()
             expAff.setMessage("Erreur : la fonction IM n'est définis que pour des nombres");
         }
     }
+    else expAff.setMessage("Erreur : Pas assez d'arguments");
 }
 
 // ------------------------------------------------------ CLASS = ------------------------------------------------------------------------
@@ -797,7 +804,7 @@ Egal::~Egal(){}
 
 void Egal::operation()
 {
-    if (expAff.taille()>=1)
+    if (expAff.taille()>=2)
     {
         ObjectPile& v2=expAff.top();
         expAff.pop();
@@ -882,6 +889,613 @@ void Egal::operation()
             expAff.push(*(new Entier(0)));
             expAff.setMessage("FAUX");
 
+        }
+        else {
+            expAff.push(v1);
+            expAff.push(v2);
+            expAff.setMessage("Erreur : les opérateurs logiques ne sont définis que pour des nombres");
+        }
+    }
+    else expAff.setMessage("Erreur : Pas assez d'arguments");
+}
+
+// ------------------------------------------------------ CLASS != ------------------------------------------------------------------------
+
+Different::~Different(){}
+
+void Different::operation()
+{
+    if (expAff.taille()>=2)
+    {
+        ObjectPile& v2=expAff.top();
+        expAff.pop();
+        ObjectPile& v1=expAff.top();
+        expAff.pop();
+        Nombre* a1=dynamic_cast<Nombre*>(&v1);
+        Nombre* b1=dynamic_cast<Nombre*>(&v2);
+        if(a1 && b1)
+        {
+            Nombre* a;
+            Nombre* b;
+            Entier* a2=dynamic_cast<Entier*>(a1);
+            if(a2!=nullptr) {
+                Entier* b2=dynamic_cast<Entier*>(b1);
+                if(b2!=nullptr) {
+                    if (a2->getInt()==b2->getInt()){                                                //entier == entier
+                        expAff.push(*(new Entier(0)));
+                        expAff.setMessage("Faux");return;
+                    }
+                }
+            }
+            Rationnel* a3=dynamic_cast<Rationnel*>(a1);
+            if(a3!=nullptr) {
+                Rationnel* b3=dynamic_cast<Rationnel*>(b1);
+                if(b3!=nullptr) {                                                                   // rationnel == rationnel
+                    if (a3->getDen().getInt()==b3->getDen().getInt() && a3->getNum().getInt()==b3->getNum().getInt()){
+                        expAff.push(*(new Entier(0)));
+                        expAff.setMessage("Faux");return;
+                    }
+                }
+                Reel* c3=dynamic_cast<Reel*>(b1);
+                if(c3!=nullptr) {
+                    Reel* d3 = new Reel(a3->getNum().getInt()/(a3->getDen().getInt()+1.0-1.0));
+                    if (d3->getRel()==c3->getRel()){                                                //rationnel == reel
+                        expAff.push(*(new Entier(0)));
+                        expAff.setMessage("Faux");return;
+                    }
+                 }
+            }
+            Reel* a4=dynamic_cast<Reel*>(a1);
+            if(a4!=nullptr) {
+                Reel* b4=dynamic_cast<Reel*>(b1);
+                if(b4!=nullptr) {
+                    if (a4->getRel()==b4->getRel()){                                                // reel == reel
+                        expAff.push(*(new Entier(0)));
+                        expAff.setMessage("Faux");return;
+                    }
+                }
+                Rationnel* c4=dynamic_cast<Rationnel*>(b1);
+                if(c4!=nullptr) {
+                    Reel* d4 = new Reel(c4->getNum().getInt()/(c4->getDen().getInt()+1.0-1.0));
+                    if (a4->getRel()==d4->getRel()){                                                //reel == rationnel
+                        expAff.push(*(new Entier(0)));
+                        expAff.setMessage("Faux");return;
+                    }
+                 }
+            }
+            Complexe* a5=dynamic_cast<Complexe*>(a1);                                               //complexe == complexe
+            if(a5!=nullptr) {
+                Complexe* b5=dynamic_cast<Complexe*>(b1);
+                if(b5!=nullptr) {
+                        expAff.push(a5->getIm());   //on réinjecte les 2 parties imaginaires dans la pile
+                        expAff.push(b5->getIm());
+                        Egal* recursifIm = new Egal(expAff);
+                        recursifIm->operation();    //on test l'operation!= sur les imaginaires
+                        expAff.push(a5->getRe());   //on réinjecte les 2 parties reelles dans la pile
+                        expAff.push(b5->getRe());
+                        Egal* recursifRe = new Egal(expAff);
+                        recursifRe->operation();    //on test l'operation!= sur les imaginaires
+                        ObjectPile& testIm=expAff.top();
+                        expAff.pop();
+                        ObjectPile& testRe=expAff.top();
+                        expAff.pop();
+                        Entier* testIm2=dynamic_cast<Entier*>(&testIm);
+                        Entier* testRe2=dynamic_cast<Entier*>(&testRe);
+                        if (testIm2->getInt() && testRe2->getInt()){    //on regarde si les 2 tests ont retournés VRAI
+                            expAff.push(*(new Entier(0)));
+                            expAff.setMessage("FAUX");return;
+                        }
+                }
+            }
+            expAff.push(*(new Entier(0)));
+            expAff.setMessage("VRAI");
+
+        }
+        else {
+            expAff.push(v1);
+            expAff.push(v2);
+            expAff.setMessage("Erreur : les opérateurs logiques ne sont définis que pour des nombres");
+        }
+    }
+    else expAff.setMessage("Erreur : Pas assez d'arguments");
+}
+
+// ------------------------------------------------------ CLASS >= ------------------------------------------------------------------------
+
+SupOuEgal::~SupOuEgal(){}
+
+void SupOuEgal::operation()
+{
+    if (expAff.taille()>=2)
+    {
+        ObjectPile& v2=expAff.top();
+        expAff.pop();
+        ObjectPile& v1=expAff.top();
+        expAff.pop();
+        Nombre* a1=dynamic_cast<Nombre*>(&v1);
+        Nombre* b1=dynamic_cast<Nombre*>(&v2);
+        if(a1 && b1)
+        {
+            Nombre* a;
+            Nombre* b;
+            Entier* a2=dynamic_cast<Entier*>(a1);
+            if(a2!=nullptr) {
+                Entier* b2=dynamic_cast<Entier*>(b1);
+                if(b2!=nullptr) {
+                    if (a2->getInt()>=b2->getInt()){                                                //entier >= entier
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Rationnel* c2=dynamic_cast<Rationnel*>(b1);
+                if(c2!=nullptr) {                                                                   // entier >= rationnel
+                    if (a2->getInt() >= c2->getNum().getInt()/(c2->getNum().getInt())+1.0-1){
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Reel* d2=dynamic_cast<Reel*>(b1);
+                if(d2!=nullptr) {
+                    if (a2->getInt() >= d2->getRel()){                                                //entier >= reel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                 }
+            }
+            Rationnel* a3=dynamic_cast<Rationnel*>(a1);
+            if(a3!=nullptr) {
+                Rationnel* b3=dynamic_cast<Rationnel*>(b1);
+                if(b3!=nullptr) {                                                                   // rationnel >= rationnel
+                    if (a3->getNum().getInt()/(a3->getDen().getInt()+1.0-1) >= b3->getNum().getInt()/(b3->getDen().getInt())+1.0-1){
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Reel* c3=dynamic_cast<Reel*>(b1);
+                if(c3!=nullptr) {
+                    if (a3->getNum().getInt()/(a3->getDen().getInt()+1.0-1) >= c3->getRel()){       //rationnel >= reel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Entier* d3=dynamic_cast<Entier*>(b1);
+                if(d3!=nullptr) {
+                    if (a3->getNum().getInt()/(a3->getDen().getInt()+1.0-1) >= d3->getInt()){        //rationnel >= entier
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+            }
+            Reel* a4=dynamic_cast<Reel*>(a1);
+            if(a4!=nullptr) {
+                Reel* b4=dynamic_cast<Reel*>(b1);
+                if(b4!=nullptr) {
+                    if (a4->getRel()>=b4->getRel()){                                                // reel >= reel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Rationnel* c4=dynamic_cast<Rationnel*>(b1);
+                if(c4!=nullptr) {
+                    if (a4->getRel() >= c4->getNum().getInt()/(c4->getDen().getInt()+1.0-1.0)){     //reel >= rationnel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Entier* d4=dynamic_cast<Entier*>(b1);
+                if(d4!=nullptr) {
+                    if (a4->getRel() >= d4->getInt()){                                              //reel >= entier
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+            }
+            Complexe* a5=dynamic_cast<Complexe*>(a1);                                               //complexe >= complexe
+            if(a5!=nullptr) {
+                Complexe* b5=dynamic_cast<Complexe*>(b1);
+                if(b5!=nullptr) {
+                    expAff.push(a5->getIm());   //on réinjecte les 2 parties imaginaires dans la pile
+                    expAff.push(b5->getIm());
+                    SupOuEgal* recursifIm = new SupOuEgal(expAff);
+                    recursifIm->operation();    //on test l'operation== sur les imaginaires
+                    expAff.push(a5->getRe());   //on réinjecte les 2 parties reelles dans la pile
+                    expAff.push(b5->getRe());
+                    SupOuEgal* recursifRe = new SupOuEgal(expAff);
+                    recursifRe->operation();    //on test l'operation== sur les imaginaires
+                    ObjectPile& testIm=expAff.top();
+                    expAff.pop();
+                    ObjectPile& testRe=expAff.top();
+                    expAff.pop();
+                    Entier* testIm2=dynamic_cast<Entier*>(&testIm);
+                    Entier* testRe2=dynamic_cast<Entier*>(&testRe);
+                    if (testIm2->getInt() && testRe2->getInt()){    //on regarde si les 2 tests ont retournés VRAI
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("VRAI");return;
+                    }
+                }
+            }
+            expAff.push(*(new Entier(0)));
+            expAff.setMessage("FAUX");
+
+        }
+        else {
+            expAff.push(v1);
+            expAff.push(v2);
+            expAff.setMessage("Erreur : les opérateurs logiques ne sont définis que pour des nombres");
+        }
+    }
+}
+
+// ------------------------------------------------------ CLASS =< ------------------------------------------------------------------------
+
+InfOuEgal::~InfOuEgal(){}
+
+void InfOuEgal::operation()
+{
+    if (expAff.taille()>=2)
+    {
+        ObjectPile& v2=expAff.top();
+        expAff.pop();
+        ObjectPile& v1=expAff.top();
+        expAff.pop();
+        Nombre* a1=dynamic_cast<Nombre*>(&v1);
+        Nombre* b1=dynamic_cast<Nombre*>(&v2);
+        if(a1 && b1)
+        {
+            Nombre* a;
+            Nombre* b;
+            Entier* a2=dynamic_cast<Entier*>(a1);
+            if(a2!=nullptr) {
+                Entier* b2=dynamic_cast<Entier*>(b1);
+                if(b2!=nullptr) {
+                    if (a2->getInt() <= b2->getInt()){                                                //entier <= entier
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Rationnel* c2=dynamic_cast<Rationnel*>(b1);
+                if(c2!=nullptr) {                                                                   // entier <= rationnel
+                    if (a2->getInt() <= c2->getNum().getInt()/(c2->getNum().getInt())+1.0-1){
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Reel* d2=dynamic_cast<Reel*>(b1);
+                if(d2!=nullptr) {
+                    if (a2->getInt() <= d2->getRel()){                                                //entier <= reel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                 }
+            }
+            Rationnel* a3=dynamic_cast<Rationnel*>(a1);
+            if(a3!=nullptr) {
+                Rationnel* b3=dynamic_cast<Rationnel*>(b1);
+                if(b3!=nullptr) {                                                                   // rationnel <= rationnel
+                    if (a3->getNum().getInt()/(a3->getDen().getInt()+1.0-1) <= b3->getNum().getInt()/(b3->getDen().getInt())+1.0-1){
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Reel* c3=dynamic_cast<Reel*>(b1);
+                if(c3!=nullptr) {
+                    if (a3->getNum().getInt()/(a3->getDen().getInt()+1.0-1) <= c3->getRel()){       //rationnel <= reel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Entier* d3=dynamic_cast<Entier*>(b1);
+                if(d3!=nullptr) {
+                    if (a3->getNum().getInt()/(a3->getDen().getInt()+1.0-1) <= d3->getInt()){        //rationnel <= entier
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+            }
+            Reel* a4=dynamic_cast<Reel*>(a1);
+            if(a4!=nullptr) {
+                Reel* b4=dynamic_cast<Reel*>(b1);
+                if(b4!=nullptr) {
+                    if (a4->getRel()<=b4->getRel()){                                                // reel <= reel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Rationnel* c4=dynamic_cast<Rationnel*>(b1);
+                if(c4!=nullptr) {
+                    if (a4->getRel() <= c4->getNum().getInt()/(c4->getDen().getInt()+1.0-1.0)){     //reel <= rationnel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Entier* d4=dynamic_cast<Entier*>(b1);
+                if(d4!=nullptr) {
+                    if (a4->getRel() <= d4->getInt()){                                              //reel <= entier
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+            }
+            Complexe* a5=dynamic_cast<Complexe*>(a1);                                               //complexe <= complexe
+            if(a5!=nullptr) {
+                Complexe* b5=dynamic_cast<Complexe*>(b1);
+                if(b5!=nullptr) {
+                        expAff.push(a5->getIm());   //on réinjecte les 2 parties imaginaires dans la pile
+                        expAff.push(b5->getIm());
+                        InfOuEgal* recursifIm = new InfOuEgal(expAff);
+                        recursifIm->operation();    //on test l'operation== sur les imaginaires
+                        expAff.push(a5->getRe());   //on réinjecte les 2 parties reelles dans la pile
+                        expAff.push(b5->getRe());
+                        InfOuEgal* recursifRe = new InfOuEgal(expAff);
+                        recursifRe->operation();    //on test l'operation== sur les imaginaires
+                        ObjectPile& testIm=expAff.top();
+                        expAff.pop();
+                        ObjectPile& testRe=expAff.top();
+                        expAff.pop();
+                        Entier* testIm2=dynamic_cast<Entier*>(&testIm);
+                        Entier* testRe2=dynamic_cast<Entier*>(&testRe);
+                        if (testIm2->getInt() && testRe2->getInt()){    //on regarde si les 2 tests ont retournés VRAI
+                            expAff.push(*(new Entier(1)));
+                            expAff.setMessage("VRAI");return;
+                        }
+                }
+            }
+            expAff.push(*(new Entier(0)));
+            expAff.setMessage("FAUX");
+
+        }
+        else {
+            expAff.push(v1);
+            expAff.push(v2);
+            expAff.setMessage("Erreur : les opérateurs logiques ne sont définis que pour des nombres");
+        }
+    }
+}
+
+// ------------------------------------------------------ CLASS > ------------------------------------------------------------------------
+
+Sup::~Sup(){}
+
+void Sup::operation()
+{
+    if (expAff.taille()>=2)
+    {
+        ObjectPile& v2=expAff.top();
+        expAff.pop();
+        ObjectPile& v1=expAff.top();
+        expAff.pop();
+        Nombre* a1=dynamic_cast<Nombre*>(&v1);
+        Nombre* b1=dynamic_cast<Nombre*>(&v2);
+        if(a1 && b1)
+        {
+            Nombre* a;
+            Nombre* b;
+            Entier* a2=dynamic_cast<Entier*>(a1);
+            if(a2!=nullptr) {
+                Entier* b2=dynamic_cast<Entier*>(b1);
+                if(b2!=nullptr) {
+                    if (a2->getInt()>b2->getInt()){                                                //entier > entier
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Rationnel* c2=dynamic_cast<Rationnel*>(b1);
+                if(c2!=nullptr) {                                                                   // entier > rationnel
+                    if (a2->getInt() > c2->getNum().getInt()/(c2->getNum().getInt())+1.0-1){
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Reel* d2=dynamic_cast<Reel*>(b1);
+                if(d2!=nullptr) {
+                    if (a2->getInt() > d2->getRel()){                                                //entier > reel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                 }
+            }
+            Rationnel* a3=dynamic_cast<Rationnel*>(a1);
+            if(a3!=nullptr) {
+                Rationnel* b3=dynamic_cast<Rationnel*>(b1);
+                if(b3!=nullptr) {                                                                   // rationnel > rationnel
+                    if (a3->getNum().getInt()/(a3->getDen().getInt()+1.0-1) > b3->getNum().getInt()/(b3->getDen().getInt())+1.0-1
+                        && a3->getDen().getInt()!=b3->getDen().getInt() && a3->getNum().getInt()!=b3->getNum().getInt()){
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Reel* c3=dynamic_cast<Reel*>(b1);
+                if(c3!=nullptr) {
+                    if (a3->getNum().getInt()/(a3->getDen().getInt()+1.0-1) > c3->getRel()){       //rationnel > reel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Entier* d3=dynamic_cast<Entier*>(b1);
+                if(d3!=nullptr) {
+                    if (a3->getNum().getInt()/(a3->getDen().getInt()+1.0-1) > d3->getInt()){        //rationnel > entier
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+            }
+            Reel* a4=dynamic_cast<Reel*>(a1);
+            if(a4!=nullptr) {
+                Reel* b4=dynamic_cast<Reel*>(b1);
+                if(b4!=nullptr) {
+                    if (a4->getRel()>b4->getRel()){                                                // reel > reel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Rationnel* c4=dynamic_cast<Rationnel*>(b1);
+                if(c4!=nullptr) {
+                    if (a4->getRel() > c4->getNum().getInt()/(c4->getDen().getInt()+1.0-1.0)){     //reel > rationnel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Entier* d4=dynamic_cast<Entier*>(b1);
+                if(d4!=nullptr) {
+                    if (a4->getRel() > d4->getInt()){                                              //reel > entier
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+            }
+            Complexe* a5=dynamic_cast<Complexe*>(a1);                                               //complexe > complexe
+            if(a5!=nullptr) {
+                Complexe* b5=dynamic_cast<Complexe*>(b1);
+                if(b5!=nullptr) {
+                    expAff.push(a5->getIm());   //on réinjecte les 2 parties imaginaires dans la pile
+                    expAff.push(b5->getIm());
+                    Sup* recursifIm = new Sup(expAff);
+                    recursifIm->operation();    //on test l'operation== sur les imaginaires
+                    expAff.push(a5->getRe());   //on réinjecte les 2 parties reelles dans la pile
+                    expAff.push(b5->getRe());
+                    Sup* recursifRe = new Sup(expAff);
+                    recursifRe->operation();    //on test l'operation== sur les imaginaires
+                    ObjectPile& testIm=expAff.top();
+                    expAff.pop();
+                    ObjectPile& testRe=expAff.top();
+                    expAff.pop();
+                    Entier* testIm2=dynamic_cast<Entier*>(&testIm);
+                    Entier* testRe2=dynamic_cast<Entier*>(&testRe);
+                    if (testIm2->getInt() && testRe2->getInt()){    //on regarde si les 2 tests ont retournés VRAI
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("VRAI");return;
+                    }
+                }
+            }
+            expAff.push(*(new Entier(0)));
+            expAff.setMessage("FAUX");
+
+        }
+        else {
+            expAff.push(v1);
+            expAff.push(v2);
+            expAff.setMessage("Erreur : les opérateurs logiques ne sont définis que pour des nombres");
+        }
+    }
+}
+
+// ------------------------------------------------------ CLASS < ------------------------------------------------------------------------
+
+Inf::~Inf(){}
+
+void Inf::operation()
+{
+    if (expAff.taille()>=2)
+    {
+        ObjectPile& v2=expAff.top();
+        expAff.pop();
+        ObjectPile& v1=expAff.top();
+        expAff.pop();
+        Nombre* a1=dynamic_cast<Nombre*>(&v1);
+        Nombre* b1=dynamic_cast<Nombre*>(&v2);
+        if(a1 && b1)
+        {
+            Nombre* a;
+            Nombre* b;
+            Entier* a2=dynamic_cast<Entier*>(a1);
+            if(a2!=nullptr) {
+                Entier* b2=dynamic_cast<Entier*>(b1);
+                if(b2!=nullptr) {
+                    if (a2->getInt() < b2->getInt()){                                                //entier < entier
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Rationnel* c2=dynamic_cast<Rationnel*>(b1);
+                if(c2!=nullptr) {                                                                   // entier < rationnel
+                    if (a2->getInt() < c2->getNum().getInt()/(c2->getNum().getInt())+1.0-1){
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Reel* d2=dynamic_cast<Reel*>(b1);
+                if(d2!=nullptr) {
+                    if (a2->getInt() < d2->getRel()){                                                //entier < reel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                 }
+            }
+            Rationnel* a3=dynamic_cast<Rationnel*>(a1);
+            if(a3!=nullptr) {
+                Rationnel* b3=dynamic_cast<Rationnel*>(b1);
+                if(b3!=nullptr) {                                                                   // rationnel < rationnel
+                    if (a3->getNum().getInt()/(a3->getDen().getInt()+1.0-1) > b3->getNum().getInt()/(b3->getDen().getInt())+1.0-1
+                        && a3->getDen().getInt()!=b3->getDen().getInt() && a3->getNum().getInt()!=b3->getNum().getInt()){
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Reel* c3=dynamic_cast<Reel*>(b1);
+                if(c3!=nullptr) {
+                    if (a3->getNum().getInt()/(a3->getDen().getInt()+1.0-1) < c3->getRel()){       //rationnel < reel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Entier* d3=dynamic_cast<Entier*>(b1);
+                if(d3!=nullptr) {
+                    if (a3->getNum().getInt()/(a3->getDen().getInt()+1.0-1) < d3->getInt()){        //rationnel < entier
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+            }
+            Reel* a4=dynamic_cast<Reel*>(a1);
+            if(a4!=nullptr) {
+                Reel* b4=dynamic_cast<Reel*>(b1);
+                if(b4!=nullptr) {
+                    if (a4->getRel()<b4->getRel()){                                                // reel < reel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Rationnel* c4=dynamic_cast<Rationnel*>(b1);
+                if(c4!=nullptr) {
+                    if (a4->getRel() < c4->getNum().getInt()/(c4->getDen().getInt()+1.0-1.0)){     //reel < rationnel
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+                Entier* d4=dynamic_cast<Entier*>(b1);
+                if(d4!=nullptr) {
+                    if (a4->getRel() < d4->getInt()){                                              //reel < entier
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("Vrai");return;
+                    }
+                }
+            }
+            Complexe* a5=dynamic_cast<Complexe*>(a1);                                              //complexe < complexe
+            if(a5!=nullptr) {
+                Complexe* b5=dynamic_cast<Complexe*>(b1);
+                if(b5!=nullptr) {
+                    expAff.push(a5->getIm());   //on réinjecte les 2 parties imaginaires dans la pile
+                    expAff.push(b5->getIm());
+                    Inf* recursifIm = new Inf(expAff);
+                    recursifIm->operation();    //on test l'operation== sur les imaginaires
+                    expAff.push(a5->getRe());   //on réinjecte les 2 parties reelles dans la pile
+                    expAff.push(b5->getRe());
+                    Inf* recursifRe = new Inf(expAff);
+                    recursifRe->operation();    //on test l'operation== sur les imaginaires
+                    ObjectPile& testIm=expAff.top();
+                    expAff.pop();
+                    ObjectPile& testRe=expAff.top();
+                    expAff.pop();
+                    Entier* testIm2=dynamic_cast<Entier*>(&testIm);
+                    Entier* testRe2=dynamic_cast<Entier*>(&testRe);
+                    if (testIm2->getInt() && testRe2->getInt()){    //on regarde si les 2 tests ont retournés VRAI
+                        expAff.push(*(new Entier(1)));
+                        expAff.setMessage("VRAI");return;
+                    }
+                }
+            }
+            expAff.push(*(new Entier(0)));
+            expAff.setMessage("FAUX");
         }
         else {
             expAff.push(v1);
@@ -1029,6 +1643,26 @@ OperateurAvance* FactoryOperateur::ProductOP(QString s)
         else if (s=="=")
         {
             return new Egal(pil);
+        }
+        else if (s=="!=")
+        {
+            return new Different(pil);
+        }
+        else if (s==">=")
+        {
+            return new SupOuEgal(pil);
+        }
+        else if (s=="<=")
+        {
+            return new InfOuEgal(pil);
+        }
+        else if (s==">")
+        {
+            return new Sup(pil);
+        }
+        else if (s=="<")
+        {
+            return new Inf(pil);
         }
         else if (s=="DUP")
         {

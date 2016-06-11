@@ -163,6 +163,61 @@ public:
     void operation();
 };
 
+// ------------------------------------------------------ CLASS != ------------------------------------------------------------------------
+
+
+class Different : public OperateurAvance
+{
+public:
+    Different(Pile& p): OperateurAvance(p) {}
+    ~Different();
+    void operation();
+};
+
+// ------------------------------------------------------ CLASS >= ------------------------------------------------------------------------
+
+
+class SupOuEgal : public OperateurAvance
+{
+public:
+    SupOuEgal(Pile& p): OperateurAvance(p) {}
+    ~SupOuEgal();
+    void operation();
+};
+
+// ------------------------------------------------------ CLASS =< ------------------------------------------------------------------------
+
+
+class InfOuEgal : public OperateurAvance
+{
+public:
+    InfOuEgal(Pile& p): OperateurAvance(p) {}
+    ~InfOuEgal();
+    void operation();
+};
+
+// ------------------------------------------------------ CLASS > ------------------------------------------------------------------------
+
+
+class Sup : public OperateurAvance
+{
+public:
+    Sup(Pile& p): OperateurAvance(p) {}
+    ~Sup();
+    void operation();
+};
+
+// ------------------------------------------------------ CLASS < ------------------------------------------------------------------------
+
+
+class Inf : public OperateurAvance
+{
+public:
+    Inf(Pile& p): OperateurAvance(p) {}
+    ~Inf();
+    void operation();
+};
+
 
 // ------------------------------------------------------ CLASS DUP ------------------------------------------------------------------------
 
@@ -187,7 +242,7 @@ public:
     void operation();
 };
 
-// ------------------------------------------------------ CLASS DROP ------------------------------------------------------------------------
+// ------------------------------------------------------ CLASS SWAP ------------------------------------------------------------------------
 
 
 class Swap : public OperateurAvance
