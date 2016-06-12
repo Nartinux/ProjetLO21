@@ -12,7 +12,8 @@
 // ------------------------------------------------------ CLASS PILE -----------------------------------------------------------
 
 
-class Pile : public QObject {
+class Pile : public QObject
+{
     Q_OBJECT
 
     ObjectPile** ob;
@@ -76,24 +77,26 @@ signals:
 
 class Memento
 {
-
     ObjectPile** obM;
     unsigned int nbM;
     unsigned int nbMaxM;
     QString messageM;
     unsigned int nbAfficheM;
+
+    //Pile pil;
     friend class PileMemento;
 public:
     Memento(ObjectPile** ob, unsigned int nb, unsigned int nbMax, QString message, unsigned int nbAffiche): nbM(nb), nbMaxM(nbMax), messageM(message), nbAfficheM(nbAffiche)
     {
-        ObjectPile** obM=new ObjectPile*[nbMax];
-        for(unsigned int i=0; i<nb; i++) obM[i]=ob[i];
+        /*ObjectPile** obM=new ObjectPile*[nbMax];
+        for(unsigned int i=0; i<nb; i++) obM[i]=ob[i];*/
     }
     ~Memento()
     {
-        delete[] obM;
+        //delete[] obM;
     }
-    QString getMessage() {return messageM;}
+    //Pile& getPile(){return &pil;}
+    //QString getMessage() {return messageM;}
 };
 
 
@@ -101,6 +104,7 @@ public:
 
 class PileMemento
 {
+
     Memento** memp;
     unsigned int nb;
     unsigned int nbMax;

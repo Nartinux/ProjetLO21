@@ -94,9 +94,17 @@ Memento& PileMemento::pop()
     return memret;
 }
 
+
+
 void PileMemento::restore(Pile& p)
 {
+
     Memento& mem=pop();
+    //p=mem.getPile();
+
+
+
+    /*
     // on efface la pile
     for (unsigned int i = 0; i < p.nb; ++i)
     {
@@ -111,5 +119,6 @@ void PileMemento::restore(Pile& p)
     p.nbMax=mem.nbMaxM;
     p.message=mem.messageM;
     p.nbAffiche=mem.nbAfficheM;
+    */
 }
 

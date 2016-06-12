@@ -1582,7 +1582,7 @@ Undo::~Undo(){}
 
 void Undo::operation()
 {
-    //pm.restore(expAff);
+    //pm.restore(&expAff);
     expAff.setMessage("l'operation ne fonctionne pas");
 }
 
