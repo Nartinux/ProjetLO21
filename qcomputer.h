@@ -1,7 +1,7 @@
 #ifndef QCOMPUTER_H
 #define QCOMPUTER_H
 
-
+#include <Qt>
 #include <QFile>
 #include <QTextStream> // Flux sortant du fichier
 #include <QWidget>
@@ -93,11 +93,23 @@ class QComputer : public QWidget
     QPushButton* butMod;
     QPushButton* butPow;
     QPushButton* butNeg;
-    QPushButton* butSin;
-    QPushButton* butCos;
-    QPushButton* butTan;
+    QPushButton* butAnd;
+    QPushButton* butOr;
+    QPushButton* butNot;
     QPushButton* butNum;
     QPushButton* butDen;
+    QPushButton* butEgal;
+    QPushButton* butDiff;
+    QPushButton* butInfEg;
+    QPushButton* butSupEg;
+    QPushButton* butInf;
+    QPushButton* butSup;
+    QPushButton* butSto;
+    QPushButton* butDup;
+    QPushButton* butDrop;
+    QPushButton* butSwap;
+    QPushButton* butClear;
+    QPushButton* butForget;
     QPushButton* but$;
     QPushButton* butRe;
     QPushButton* butIm;
@@ -111,10 +123,13 @@ class QComputer : public QWidget
     QHBoxLayout* hori6;
     QHBoxLayout* hori7;
     QHBoxLayout* hori8;     // enter + vue atm
+    QHBoxLayout* hori9;
     QVBoxLayout* verti1;
     QVBoxLayout* verti2;
     QVBoxLayout* verti3;
-    QVBoxLayout* verti4;    // ...
+    QVBoxLayout* verti4;
+    QVBoxLayout* verti5;
+    QHBoxLayout* pileEdit;
     QHBoxLayout* pave;
     QSignalMapper* mapper; //collecte des signaux sans arguments et les redistribue avec argument
     Pile* pile;
