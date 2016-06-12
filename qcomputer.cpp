@@ -40,9 +40,9 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     butMod= new QPushButton("MOD", this);
     butPow= new QPushButton("POW", this);
     butNeg= new QPushButton("NEG", this);
-    butSin= new QPushButton("SIN", this);
-    butCos= new QPushButton("COS", this);
-    butTan= new QPushButton("TAN", this);
+    butAnd= new QPushButton("AND", this);
+    butOr= new QPushButton("OR", this);
+    butNot= new QPushButton("NOT", this);
     butNum= new QPushButton("NUM", this);
     butDen= new QPushButton("DEN", this);
     but$  = new QPushButton("$", this);
@@ -50,21 +50,22 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     butIm= new QPushButton("IM", this);
     submit= new QPushButton("Enter",this);
     vueatm= new QPushButton("Variables stokées",this);
+    vueatm->setFixedWidth(200);
+    vueatm->setStyleSheet("background-color: #0866B9; color: white");
+    butEgal= new QPushButton("==", this);
+    butDiff = new QPushButton("!=", this);
+    butSupEg= new QPushButton(">=", this);
+    butInfEg= new QPushButton("=<", this);
+    butSup= new QPushButton(">", this);
+    butInf= new QPushButton("<", this);
+    butSto= new QPushButton("STO", this);
+    butDup  = new QPushButton("DUP", this);
+    butDrop = new QPushButton("DROP", this);
+    butSwap= new QPushButton("SWAP", this);
+    butClear= new QPushButton("CLEAR",this);
+    butForget= new QPushButton("FORGET",this);
 
-    but0->setCursor(Qt::PointingHandCursor);
-    but1->setCursor(Qt::PointingHandCursor);
-    but2->setCursor(Qt::PointingHandCursor);
-    but3->setCursor(Qt::PointingHandCursor);
-    but4->setCursor(Qt::PointingHandCursor);
-    but5->setCursor(Qt::PointingHandCursor);
-    but6->setCursor(Qt::PointingHandCursor);
-    but7->setCursor(Qt::PointingHandCursor);
-    but8->setCursor(Qt::PointingHandCursor);
-    but9->setCursor(Qt::PointingHandCursor);
-    butAdd->setCursor(Qt::PointingHandCursor);
-    butMult->setCursor(Qt::PointingHandCursor);
-    butDiv->setCursor(Qt::PointingHandCursor);
-    butSub->setCursor(Qt::PointingHandCursor);
+
 
     hori1 = new QHBoxLayout;
     hori2 = new QHBoxLayout;
@@ -74,11 +75,14 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     hori6 = new QHBoxLayout;
     hori7 = new QHBoxLayout;
     hori8 = new QHBoxLayout;    // pour enter et vue atm
+    hori9 = new QHBoxLayout;
     verti1= new QVBoxLayout;
     verti2= new QVBoxLayout;
     verti3= new QVBoxLayout;
-    pave= new QHBoxLayout;
-    verti4= new QVBoxLayout;// ...
+    pave = new QHBoxLayout;
+    verti4 = new QVBoxLayout;
+    verti5 = new QVBoxLayout;
+    pileEdit = new QHBoxLayout;
 
     hori1->addWidget(but1);
     hori1->addWidget(but2);
@@ -92,9 +96,9 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     hori4->addWidget(butDivEnt);
     hori4->addWidget(butMod);
     hori4->addWidget(butPow);
-    hori5->addWidget(butTan);
-    hori5->addWidget(butSin);
-    hori5->addWidget(butCos);
+    hori5->addWidget(butAnd);
+    hori5->addWidget(butOr);
+    hori5->addWidget(butNot);
     hori6->addWidget(butNeg);
     hori6->addWidget(butNum);
     hori6->addWidget(butDen);
@@ -103,6 +107,13 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     hori7->addWidget(butIm);
     hori8->addWidget(submit);   // enter
     hori8->addWidget(vueatm);   // vue atm
+    hori9->addWidget(butEgal);
+    hori9->addWidget(butInf);
+    hori9->addWidget(butSup);
+    hori9->addWidget(butInfEg);
+    hori9->addWidget(butSupEg);
+    hori9->addWidget(butDiff);
+    hori9->addWidget(butSto);
     verti1->addLayout(hori1);
     verti1->addLayout(hori2);
     verti1->addLayout(hori3);
@@ -115,20 +126,29 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     verti3->addLayout(hori5);
     verti3->addLayout(hori6);
     verti3->addLayout(hori7);
+    verti4->addWidget(butDup);
+    verti4->addWidget(butDrop);
+    verti4->addWidget(butSwap);
+    verti4->addWidget(butClear);
+    verti4->addWidget(butForget);
+    verti5->addWidget(vuePile);
+    verti5->addWidget(commande);
     pave->addLayout(verti1);
     pave->addLayout(verti2);
     pave->addLayout(verti3);
-    verti4->addLayout(pave);
-    verti4->addLayout(hori8);   // ici
-        // la
+    pileEdit->addLayout(verti5);
+    pileEdit->addLayout(verti4);
+
 
 
     // positionner les objets sur la fenetre
     couche->addWidget(message);
-    couche->addWidget(vuePile);
-    couche->addWidget(commande);
-    couche->addLayout(verti4);  // remplace le pave !
+    couche->addLayout(pileEdit);
+    couche->addLayout(pave);
+    couche->addLayout(hori9);
+    couche->addLayout(hori8);
     setLayout(couche);
+
 
 
     //connecter les boutons à la commande
@@ -167,6 +187,54 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     mapper->setMapping(butMod, "MOD");
     connect(butDivEnt, SIGNAL(clicked()), mapper, SLOT(map()));
     mapper->setMapping(butDivEnt, "DIV");
+    connect(butEgal, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butEgal, "=");
+    connect(butInf, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butInf, "<");
+    connect(butSup, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butSup, ">");
+    connect(butInfEg, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butInfEg, "<=");
+    connect(butSupEg, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butSupEg, ">=");
+    connect(butDiff, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butDiff, "!=");
+    connect(butSto, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butSto, "STO");
+    connect(butDup, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butDup, "DUP");
+    connect(butDrop, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butDrop, "DROP");
+    connect(butSwap, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butSwap, "SWAP");
+    connect(butClear, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butClear, "CLEAR");
+    connect(butForget, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butForget, "FORGET");
+    connect(butPow, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butPow, "POW");
+    connect(butAnd, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butAnd, "AND");
+    connect(butOr, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butOr, "OR");
+    connect(butNot, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butNot, "NOT");
+    connect(butNeg, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butNeg, "NEG");
+    connect(butNum, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butNum, "NUM");
+    connect(butDen, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butDen, "DEN");
+    connect(butRe, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butRe, "RE");
+    connect(butIm, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(butIm, "IM");
+    connect(but$, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(but$, "$");
+
+
+
+
 
 
     connect(vueatm, SIGNAL(clicked()), this, SLOT(ouvrirFenVar()));
@@ -178,7 +246,7 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     this->setWindowTitle("UTComputer");
 
     //color
-    message->setStyleSheet("background: blue; color: yellow");
+    message->setStyleSheet("background: #0866B9; color: white");
     message->setReadOnly(true);
     vuePile->setStyleSheet("background: darkred; color: white");
     vuePile->verticalHeader()->setStyleSheet("color: black");

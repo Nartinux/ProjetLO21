@@ -218,6 +218,39 @@ public:
     void operation();
 };
 
+// ------------------------------------------------------ CLASS AND ------------------------------------------------------------------------
+
+
+class And : public OperateurAvance
+{
+public:
+    And(Pile& p): OperateurAvance(p) {}
+    ~And();
+    void operation();
+};
+
+
+// ------------------------------------------------------ CLASS Or ------------------------------------------------------------------------
+
+
+class Or : public OperateurAvance
+{
+public:
+    Or(Pile& p): OperateurAvance(p) {}
+    ~Or();
+    void operation();
+};
+
+// ------------------------------------------------------ CLASS NOT ------------------------------------------------------------------------
+
+
+class Not : public OperateurAvance
+{
+public:
+    Not(Pile& p): OperateurAvance(p) {}
+    ~Not();
+    void operation();
+};
 
 // ------------------------------------------------------ CLASS DUP ------------------------------------------------------------------------
 
