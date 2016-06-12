@@ -465,11 +465,11 @@ Nombre& Complexe::operator*(Nombre& a)
         return c->simplification();
     }
 
-    Entier& a2=dynamic_cast<Entier&>(a);
-    Reel& a3=dynamic_cast<Reel&>(a);
-    Rationnel& a4=dynamic_cast<Rationnel&>(a);
+    Entier* a2=dynamic_cast<Entier*>(&a);
+    Reel *a3=dynamic_cast<Reel*>(&a);
+    Rationnel* a4=dynamic_cast<Rationnel*>(&a);
     Nombre* a5=dynamic_cast<Nombre*>(&a);
-    if (&a2!=nullptr || &a3!=nullptr || &a4!=nullptr)
+    if (a2!=nullptr || a3!=nullptr || a4!=nullptr)
     {
         Complexe* c= new Complexe((a5->operator*(*re)),(a5->operator*(*im)));
         return c->simplification();
@@ -506,11 +506,11 @@ Nombre& Complexe::operator/(Nombre& a)
         return c->simplification();
     }
 
-    Entier& a2=dynamic_cast<Entier&>(a);
-    Reel& a3=dynamic_cast<Reel&>(a);
-    Rationnel& a4=dynamic_cast<Rationnel&>(a);
+    Entier* a2=dynamic_cast<Entier*>(&a);
+    Reel *a3=dynamic_cast<Reel*>(&a);
+    Rationnel* a4=dynamic_cast<Rationnel*>(&a);
     Nombre* a5=dynamic_cast<Nombre*>(&a);
-    if (&a2!=nullptr || &a3!=nullptr || &a4!=nullptr)
+    if (a2!=nullptr || a3!=nullptr || a4!=nullptr)
     {
         Complexe* c= new Complexe((a5->operator /(*re)),(a5->operator /(*im)));
         return c->simplification();

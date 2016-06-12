@@ -64,6 +64,9 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     butSwap= new QPushButton("SWAP", this);
     butClear= new QPushButton("CLEAR",this);
     butForget= new QPushButton("FORGET",this);
+    point= new QPushButton(".",this);
+    point->setFixedWidth(60);
+
 
 
 
@@ -106,6 +109,7 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     hori7->addWidget(butRe);
     hori7->addWidget(butIm);
     hori8->addWidget(submit);   // enter
+    hori8->addWidget(point);
     hori8->addWidget(vueatm);   // vue atm
     hori9->addWidget(butEgal);
     hori9->addWidget(butInf);
@@ -231,6 +235,8 @@ QComputer::QComputer(QWidget *parent): QWidget(parent) //constructeur de fenetre
     mapper->setMapping(butIm, "IM");
     connect(but$, SIGNAL(clicked()), mapper, SLOT(map()));
     mapper->setMapping(but$, "$");
+    connect(point, SIGNAL(clicked()), mapper, SLOT(map()));
+    mapper->setMapping(point, ".");
 
 
 
@@ -341,7 +347,7 @@ void QComputer::refresh()
     // mettre à jour
     unsigned int nb = 0;
     for (Pile::iterator it=pile->begin(); it!=pile->end() && nb<pile->getNbItemsToAffiche();++it,++nb)
-        vuePile->item(pile->getNbItemsToAffiche()-1-nb,0)->setText((*it).toString());
+        vuePile->item(4,0)->setText((*it).toString());
 }
 
 void QComputer::envoiCmd(QString s)

@@ -113,6 +113,7 @@ class QComputer : public QWidget
     QPushButton* but$;
     QPushButton* butRe;
     QPushButton* butIm;
+    QPushButton* point;
     QPushButton* submit;
     QPushButton* vueatm;    // vue atm
     QHBoxLayout* hori1;

@@ -93,7 +93,7 @@ void Controleur::sentCommande(QString& s)
                 }
                 else
                 {
-                    expAff.setMessage("Les operandes ne sont pas des nuneriques");
+                    expAff.setMessage("Les operandes ne sont pas des nombres");
                     expAff.push(*a1);
                     expAff.push(*a2);
                 }

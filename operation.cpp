@@ -506,36 +506,40 @@ Forget::~Forget(){}
 
 void Forget::operation()
 {
-    ObjectPile& exp=getPile().top();
-    getPile().pop();
-    Expression* expat=dynamic_cast<Expression*>(&exp);
-    if (!expat)
+    if (expAff.taille()>=2)
     {
-        getPile().push(exp);
-        getPile().setMessage("Erreur ce n'est pas une expression");
-    }
-    else
-    {
-        QString s=expat->getExp();
-        QString s2=s.mid(1,(s.length()-2));
+        ObjectPile& exp=getPile().top();
+        getPile().pop();
+        Expression* expat=dynamic_cast<Expression*>(&exp);
+        if (!expat)
+        {
+            getPile().push(exp);
+            getPile().setMessage("Erreur ce n'est pas une expression");
+        }
+        else
+        {
+            QString s=expat->getExp();
+            QString s2=s.mid(1,(s.length()-2));
 
-        if (getVrx().verifOperateurAvance(s2))
-        {
-            getPile().push(*expat);
-            getPile().setMessage("Non, il s'agit d'un operateur");
-        }
-        else if(getVrx().verifAtomeExistant(s2))
-        {
-            //Atome* at=getAtm().findAt(s2);  // on cherche l'atome dans l'atome manager
-            getAtm().removeAtome(s2);       // on detruit l'atome via l'atomeManager, le destructeur de l'atome s'occupe de détruire son objPile
-            delete expat;                   // on detruit l'expression represantant l'atome
-        }
-        else    // l'expression ne represente pas un atome
-        {
-            getPile().push(*expat);
-            getPile().setMessage("cet atome n'existe pas");
+            if (getVrx().verifOperateurAvance(s2))
+            {
+                getPile().push(*expat);
+                getPile().setMessage("Non, il s'agit d'un operateur");
+            }
+            else if(getVrx().verifAtomeExistant(s2))
+            {
+                //Atome* at=getAtm().findAt(s2);  // on cherche l'atome dans l'atome manager
+                getAtm().removeAtome(s2);       // on detruit l'atome via l'atomeManager, le destructeur de l'atome s'occupe de détruire son objPile
+                delete expat;                   // on detruit l'expression represantant l'atome
+            }
+            else    // l'expression ne represente pas un atome
+            {
+                getPile().push(*expat);
+                getPile().setMessage("cet atome n'existe pas");
+            }
         }
     }
+    else expAff.setMessage("Erreur : Pas assez d'arguments");
 }
 
 // ------------------------------------------------------ CLASS MODULO ------------------------------------------------------------------------
@@ -601,7 +605,7 @@ void Diveucli::operation()
             {
                 Entier* res =new Entier(ent1->getInt()/ent2->getInt());
                 expAff.push(*res);
-                expAff.setMessage("Modulo effectué");
+                expAff.setMessage("Division Euclidienne effectuée");
             }
             else {
                 expAff.push(v1);
