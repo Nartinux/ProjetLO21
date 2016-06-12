@@ -21,7 +21,7 @@ class Pile : public QObject {
     QString message;
     unsigned int nbAffiche;
     void agrandissementCapacite();
-    
+    friend class PileMemento;
 public:
     //construct et destruct
     Pile():ob(nullptr),nb(0),nbMax(0),message(""),nbAffiche(4){}
@@ -32,7 +32,7 @@ public:
     bool estVide() const { return nb==0; }
     unsigned int taille() const { return nb; }
     ObjectPile& top() const;
-    void setNbItemsToAffiche(unsigned int n) { nbAffiche=n; } // utile ??
+    void setNbItemsToAffiche(unsigned int n) { nbAffiche=n; }
     unsigned int getNbItemsToAffiche() const { return nbAffiche; }
     void setMessage(const QString& m) { message=m; modificationEtat(); }
     QString getMessage() const { return message; }
@@ -82,6 +82,7 @@ class Memento
     unsigned int nbMaxM;
     QString messageM;
     unsigned int nbAfficheM;
+    friend class PileMemento;
 public:
     Memento(ObjectPile** ob, unsigned int nb, unsigned int nbMax, QString message, unsigned int nbAffiche): nbM(nb), nbMaxM(nbMax), messageM(message), nbAfficheM(nbAffiche)
     {
@@ -92,6 +93,7 @@ public:
     {
         delete[] obM;
     }
+    QString getMessage() {return messageM;}
 };
 
 
@@ -115,7 +117,6 @@ class PileMemento
         ~Handler(){delete instance;}
     };
     static Handler handler;
-
 public:
     static PileMemento& getInstance();
     static void libereInstance();
@@ -124,6 +125,7 @@ public:
     Memento& pop();
     bool estVide() const { return nb==0; }
     unsigned int taille() const { return nb; }
+    void restore(Pile& p);
 
 };
 

@@ -1632,6 +1632,70 @@ void Not::operation()
     else expAff.setMessage("Erreur : Pas assez d'arguments");
 }
 
+// ------------------------------------------------------ CLASS POW ------------------------------------------------------------------------
+
+Pow::~Pow(){}
+
+void Pow::operation()
+{
+    if (expAff.taille()>=2)
+    {
+        ObjectPile& v2=expAff.top();
+        expAff.pop();
+        ObjectPile& v1=expAff.top();
+        expAff.pop();
+        Nombre* a1=dynamic_cast<Nombre*>(&v1);
+        Nombre* b1=dynamic_cast<Nombre*>(&v2);
+        if(a1 && b1)
+        {
+            double a;
+            double b;
+            Entier* a2=dynamic_cast<Entier*>(a1);
+            if(a2!=nullptr) {
+                a = a2->getInt();
+            }
+            Entier* b2=dynamic_cast<Entier*>(b1);
+            if(b2!=nullptr) {
+                b = b2->getInt();
+            }
+            Reel* a3=dynamic_cast<Reel*>(a1);
+            if(a3!=nullptr) {
+                a = a3->getRel();
+            }
+            Reel* b3=dynamic_cast<Reel*>(b1);
+            if(b3!=nullptr) {
+                b = b3->getRel();
+            }
+            Rationnel* a4=dynamic_cast<Rationnel*>(a1);
+            if(a4!=nullptr) {
+                a = a4->getNum().getInt()/(a4->getDen().getInt()+1.0-1.0) ;
+            }
+            Rationnel* b4=dynamic_cast<Rationnel*>(b1);
+            if(b4!=nullptr) {
+                b = b4->getNum().getInt()/(b4->getDen().getInt()+1.0-1.0) ;
+            }
+            Complexe* a5=dynamic_cast<Complexe*>(a1);
+            Complexe* b5=dynamic_cast<Complexe*>(b1);
+            if(b5!=nullptr || a5!=nullptr) {
+                expAff.push(v1);
+                expAff.push(v2);
+                expAff.setMessage("Erreur : Pow n'est pas définis pour les complexes");
+                return;
+            }
+            Reel* res = new Reel(pow(a,b));
+            expAff.push(*res);
+            expAff.setMessage("POW effectué");
+
+        }
+        else {
+            expAff.push(v1);
+            expAff.push(v2);
+            expAff.setMessage("Erreur : POW n'est définis que pour des nombres");
+        }
+    }
+    else expAff.setMessage("Erreur : Pas assez d'arguments");
+}
+
 // ------------------------------------------------------ CLASS DROP ------------------------------------------------------------------------
 
 Drop::~Drop(){}
@@ -1702,6 +1766,17 @@ void Clear::operation()
     }
 }
 
+
+// ------------------------------------------------------ CLASS UNDO ------------------------------------------------------------------------
+
+Undo::~Undo(){}
+
+void Undo::operation()
+{
+    //pm.restore(expAff);
+    expAff.setMessage("l'operation ne fonctionne pas");
+}
+
 // ------------------------------------------------------ CLASS FACTORYOPERATEUR ------------------------------------------------------------------------
 
 
@@ -1728,100 +1803,107 @@ void FactoryOperateur::libereInstance()
 OperateurAvance* FactoryOperateur::ProductOP(QString s)
 {
     if (s=="EVAL")
-        {
-            return new Eval(pil);
-        }
-        else if (s=="STO")
-        {
-            return new Sto(pil);
-        }
-        else if (s=="FORGET")
-        {
-            return new Forget(pil);
-        }
-        else if (s=="MOD")
-        {
-            return new Modulo(pil);
-        }
-        else if (s=="DIV")
-        {
-            return new Diveucli(pil);
-        }
-        else if (s=="NUM")
-        {
-            return new Numerateur(pil);
-        }
-        else if (s=="DEN")
-        {
-            return new Denominateur(pil);
-        }
-        else if (s=="$")
-        {
-            return new Operateur$(pil);
-        }
-        else if (s=="RE")
-        {
-            return new PartieReelle(pil);
-        }
-        else if (s=="IM")
-        {
-            return new PartieIm(pil);
-        }
-        else if (s=="=")
-        {
-            return new Egal(pil);
-        }
-        else if (s=="!=")
-        {
-            return new Different(pil);
-        }
-        else if (s==">=")
-        {
-            return new SupOuEgal(pil);
-        }
-        else if (s=="<=")
-        {
-            return new InfOuEgal(pil);
-        }
-        else if (s==">")
-        {
-            return new Sup(pil);
-        }
-        else if (s=="<")
-        {
-            return new Inf(pil);
-        }
-        else if (s=="DUP")
-        {
-            return new Dup(pil);
-        }
-        else if (s=="DROP")
-        {
-            return new Drop(pil);
-        }
-        else if (s=="SWAP")
-        {
-            return new Swap(pil);
-        }
-        else if (s=="CLEAR")
-        {
-            return new Clear(pil);
-        }
-        else if (s=="AND")
-        {
-            return new And(pil);
-        }
-        else if (s=="OR")
-        {
-            return new Or(pil);
-        }
-        else if (s=="NOT")
-        {
-            return new Not(pil);
-        }
-        else return nullptr;
+    {
+        return new Eval(pil);
     }
-
+    else if (s=="STO")
+    {
+        return new Sto(pil);
+    }
+    else if (s=="FORGET")
+    {
+        return new Forget(pil);
+    }
+    else if (s=="MOD")
+    {
+        return new Modulo(pil);
+    }
+    else if (s=="DIV")
+    {
+        return new Diveucli(pil);
+    }
+    else if (s=="NUM")
+    {
+        return new Numerateur(pil);
+    }
+    else if (s=="DEN")
+    {
+        return new Denominateur(pil);
+    }
+    else if (s=="$")
+    {
+        return new Operateur$(pil);
+    }
+    else if (s=="RE")
+    {
+        return new PartieReelle(pil);
+    }
+    else if (s=="IM")
+    {
+        return new PartieIm(pil);
+    }
+    else if (s=="=")
+    {
+        return new Egal(pil);
+    }
+    else if (s=="!=")
+    {
+        return new Different(pil);
+    }
+    else if (s==">=")
+    {
+        return new SupOuEgal(pil);
+    }
+    else if (s=="<=")
+    {
+        return new InfOuEgal(pil);
+    }
+    else if (s==">")
+    {
+        return new Sup(pil);
+    }
+    else if (s=="<")
+    {
+        return new Inf(pil);
+    }
+    else if (s=="DUP")
+    {
+        return new Dup(pil);
+    }
+    else if (s=="DROP")
+    {
+        return new Drop(pil);
+    }
+    else if (s=="SWAP")
+    {
+        return new Swap(pil);
+    }
+    else if (s=="CLEAR")
+    {
+        return new Clear(pil);
+    }
+    else if (s=="AND")
+    {
+        return new And(pil);
+    }
+    else if (s=="OR")
+    {
+        return new Or(pil);
+    }
+    else if (s=="NOT")
+    {
+        return new Not(pil);
+    }
+    else if (s=="POW")
+    {
+        return new Pow(pil);
+    }
+    else if (s=="UNDO")
+    {
+        return new Undo(pil);
+    }
+    else return nullptr;
+}
 
 
 

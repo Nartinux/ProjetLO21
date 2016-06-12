@@ -48,7 +48,7 @@ ObjectPile& Pile::top() const {
 }
 
 
-//---------------------------------- CLASS PILE::PILEMEMENTO ------------------------------------------------------------------------------------------------
+//--------------------------------------------------- CLASS PILE::PILEMEMENTO -------------------------------------------------------------------------------
 
 void PileMemento::agrandissementCapacite()
 {
@@ -93,3 +93,23 @@ Memento& PileMemento::pop()
     memp[nb]=nullptr;
     return memret;
 }
+
+void PileMemento::restore(Pile& p)
+{
+    Memento& mem=pop();
+    // on efface la pile
+    for (unsigned int i = 0; i < p.nb; ++i)
+    {
+        p.ob[i]=nullptr;
+    }
+    // on re remplie la pile avec memento
+    for (unsigned int i = 0; i < mem.nbM; ++i)
+    {
+        p.ob[i]=mem.obM[i];
+    }
+    p.nb=mem.nbM;
+    p.nbMax=mem.nbMaxM;
+    p.message=mem.messageM;
+    p.nbAffiche=mem.nbAfficheM;
+}
+

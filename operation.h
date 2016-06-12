@@ -252,6 +252,17 @@ public:
     void operation();
 };
 
+// ------------------------------------------------------ CLASS POW ------------------------------------------------------------------------
+
+
+class Pow : public OperateurAvance
+{
+public:
+    Pow(Pile& p): OperateurAvance(p) {}
+    ~Pow();
+    void operation();
+};
+
 // ------------------------------------------------------ CLASS DUP ------------------------------------------------------------------------
 
 
@@ -296,6 +307,24 @@ public:
     ~Clear();
     void operation();
 };
+
+
+// ------------------------------------------------------ CLASS UNDO ------------------------------------------------------------------------
+
+
+class Undo : public OperateurAvance
+{
+    PileMemento& pm;
+public:
+    Undo(Pile& p): OperateurAvance(p), pm(PileMemento::getInstance()) {}
+    ~Undo();
+    void operation();
+};
+
+
+
+
+
 
 // ------------------------------------------------------ CLASS FACTORYOPERATEUR ------------------------------------------------------------------------
 
