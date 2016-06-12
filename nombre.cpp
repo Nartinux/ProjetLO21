@@ -6,7 +6,7 @@ Reel::~Reel(){};
 
 // ------------ CLASS ENTIER -----------------------------------
 
-// pas besoin de liberer "manuellement"  la memoire pour ces methodes car ce sera fait a l'exterieur dans la methode commande de controleur.
+
 
 Nombre& Nombre::operator$(Nombre& a){
     Complexe* c = new Complexe(*this, a);
@@ -110,7 +110,7 @@ void Rationnel::simplificationConstruct()
 }
 
 
-Nombre& Rationnel::simplificationExt()      //comment on detruit l'obj si on en cree un new ? -> regarder si ratonnel ou ent et...en sortie le butter! (dans controleur)
+Nombre& Rationnel::simplificationExt()
 {
     if (den->val==1){Entier* ent=new Entier(num->val); return *ent;}
     else if (num->val==0){Entier* ent=new Entier(0); return *ent;}
@@ -128,8 +128,6 @@ Nombre& Rationnel::operator+(Nombre& a) // ent1,ent2, r // on ne détruit pas le
         Entier& ent3=dynamic_cast<Entier&>(ent1.operator+(ent2));           // allocation ent3 ne pas les detruire ils font parti du Rationnel final
         Entier& ent4=dynamic_cast<Entier&>((den->operator*(*(a1->den))));   // allocation ent4 ne pas les detruire ils font parti du Rationnel final
         Rationnel* r=new Rationnel(ent3,ent4);                             // allocation r
-        LibMemory::freeMem(&ent1);           // liberation memoire des obj cree en interne
-        LibMemory::freeMem(&ent2);
         return r->simplificationExt();
     }
 
@@ -143,7 +141,7 @@ Nombre& Rationnel::operator+(Nombre& a) // ent1,ent2, r // on ne détruit pas le
         Entier& ent5=dynamic_cast<Entier&>(a3->operator*(*den));
         Entier& ent6=dynamic_cast<Entier&>(num->operator+(ent5));
         Rationnel* r= new Rationnel(ent6,(*den));
-        LibMemory::freeMem(&ent5);
+
         return r->simplificationExt();
     }
 
@@ -155,7 +153,7 @@ Nombre& Rationnel::operator+(Nombre& a) // ent1,ent2, r // on ne détruit pas le
         Reel* re= new Reel(re1/re2+a4->val);
         return *re;
     }
-    throw ComputerException("");
+    else throw ComputerException("");
 }
 
 Nombre& Rationnel::operator-(Nombre& a)
@@ -168,8 +166,6 @@ Nombre& Rationnel::operator-(Nombre& a)
         Entier& ent3=dynamic_cast<Entier&>(ent1.operator-(ent2));
         Entier& ent4=dynamic_cast<Entier&>((den->operator*(*(a1->den))));
         Rationnel* r=new Rationnel(ent3,ent4);
-        LibMemory::freeMem(&ent1);           // liberation memoire des obj cree en interne
-        LibMemory::freeMem(&ent2);
         return r->simplificationExt();
     }
 
@@ -182,7 +178,6 @@ Nombre& Rationnel::operator-(Nombre& a)
         Entier& ent5=dynamic_cast<Entier&>(a3->operator*(*den));
         Entier& ent6=dynamic_cast<Entier&>(num->operator-(ent5));
         Rationnel* r= new Rationnel(ent6,(*den));
-        LibMemory::freeMem(&ent5);
         return r->simplificationExt();
     }
 
@@ -194,7 +189,7 @@ Nombre& Rationnel::operator-(Nombre& a)
         Reel* re= new Reel(re1/re2-a4->val);
         return *re;
     }
-    throw ComputerException("");
+    else throw ComputerException("");
 }
 
 
@@ -228,7 +223,7 @@ Nombre& Rationnel::operator*(Nombre& a)
         Reel* re= new Reel(re1/re2*a4->val);
         return *re;
     }
-    throw ComputerException("");
+    else throw ComputerException("");
 }
 
 Nombre& Rationnel::operator/(Nombre& a)
@@ -260,7 +255,7 @@ Nombre& Rationnel::operator/(Nombre& a)
         Reel* re= new Reel(re1/re2/a4->val);
         return *re;
     }
-    throw ComputerException("");
+    else throw ComputerException("");
 }
 
 Nombre& Rationnel::neg()
@@ -368,7 +363,6 @@ Nombre& Reel::operator/(Nombre& a)
     Reel* a4=dynamic_cast<Reel*>(&a);
     Reel* re=new Reel(val/a4->val);
     return *re;
-    // gerer la div par 0 !!!
 }
 Nombre& Reel::neg()
 {
@@ -390,7 +384,7 @@ QString Reel::toString()const
 Nombre& Complexe::simplification()
 {
     Entier* im1=dynamic_cast<Entier*>(im);
-    if (im1!=nullptr)
+    if (im1)
     {
         if(im1->val==0)
         {
@@ -426,7 +420,7 @@ Nombre& Complexe::operator+(Nombre& a)
         Complexe* c= new Complexe((a5->operator +(*re)),(*im));
         return c->simplification();
     }
-    throw ComputerException("type inconnu");
+    else throw ComputerException("type inconnu");
 }
 
 Nombre& Complexe::operator-(Nombre& a)
@@ -447,7 +441,7 @@ Nombre& Complexe::operator-(Nombre& a)
         Complexe* c= new Complexe((a5->operator -(*re)),(*im));
         return c->simplification();
     }
-    throw ComputerException("type inconnu");
+    else throw ComputerException("type inconnu");
 }
 
 Nombre& Complexe::operator*(Nombre& a)
@@ -459,15 +453,12 @@ Nombre& Complexe::operator*(Nombre& a)
         Nombre& nb1=re->operator*(*(a1->re));
         Nombre& nb2=(a1->im)->operator*(*im);
         Nombre& nb3=nb1.operator -(nb2);
-        LibMemory::freeMem(&nb1);
-        LibMemory::freeMem(&nb2);
+
 
         //numerateur de la partie immaginaire
         nb1=(a1->re)->operator*(*im);
         nb2=re->operator*(*(a1->im));
         Nombre& nb4=nb2.operator +(nb1);
-        LibMemory::freeMem(&nb1);
-        LibMemory::freeMem(&nb2);
 
 
         Complexe* c= new Complexe(nb3, nb4);
@@ -483,7 +474,7 @@ Nombre& Complexe::operator*(Nombre& a)
         Complexe* c= new Complexe((a5->operator*(*re)),(a5->operator*(*im)));
         return c->simplification();
     }
-    throw ComputerException("type inconnu");
+    else throw ComputerException("type inconnu");
 
 }
 
@@ -496,27 +487,20 @@ Nombre& Complexe::operator/(Nombre& a)
         Nombre& nb1= re->operator*(*(a1->re));
         Nombre& nb2= (a1->im)->operator*(*im);
         Nombre& nb3= nb1.operator +(nb2);
-        LibMemory::freeMem(&nb1);
-        LibMemory::freeMem(&nb2);
+
 
         // denominateur de la partie reelle et imaginaire
         nb1=(a1->re)->operator*(*(a1->re));
         nb2=(a1->im)->operator*(*(a1->im));
         Nombre& nb4=nb1.operator +(nb2);
         Nombre& nb5=nb3.operator/(nb4);
-        LibMemory::freeMem(&nb1);
-        LibMemory::freeMem(&nb2);
-        LibMemory::freeMem(&nb3);
+
 
         //numerateur de la partie immaginaire
         nb1=(a1->re)->operator*(*im);
         nb2=re->operator*(*(a1->im));
         nb3=nb1.operator -(nb2);
         Nombre& nb6=nb3.operator/(nb4);
-        LibMemory::freeMem(&nb1);
-        LibMemory::freeMem(&nb2);
-        LibMemory::freeMem(&nb3);
-        LibMemory::freeMem(&nb4);
 
         Complexe* c= new Complexe(nb5, nb6);
         return c->simplification();
@@ -531,7 +515,7 @@ Nombre& Complexe::operator/(Nombre& a)
         Complexe* c= new Complexe((a5->operator /(*re)),(a5->operator /(*im)));
         return c->simplification();
     }
-    throw ComputerException("type inconnu");
+    else throw ComputerException("type inconnu");
 }
 
 Nombre& Complexe::operator$(Nombre& a)
@@ -562,8 +546,4 @@ QString Complexe::toString()const
     */
 }
 
-Complexe::~Complexe()
-{
-    delete re;
-    delete im;
-}
+Complexe::~Complexe(){}

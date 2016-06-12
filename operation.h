@@ -321,7 +321,17 @@ public:
     void operation();
 };
 
+// ------------------------------------------------------ CLASS NEG ------------------------------------------------------------------------
 
+
+class Neg : public OperateurAvance
+{
+    PileMemento& pm;
+public:
+    Neg(Pile& p): OperateurAvance(p), pm(PileMemento::getInstance()) {}
+    ~Neg();
+    void operation();
+};
 
 
 

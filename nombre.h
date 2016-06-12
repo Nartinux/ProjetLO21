@@ -50,8 +50,6 @@ public :
     Nombre& operator/(Nombre& a);
     Nombre& neg();
     QString toString()const;
-
-
 };
 
 
@@ -78,11 +76,7 @@ public :
         simplificationConstruct();
     }
     //destructeur
-    ~Rationnel()
-    {
-        delete num;
-        delete den;
-    }
+    ~Rationnel(){}
 
     //getters
     Entier& getNum()const {return *num;}
@@ -95,7 +89,6 @@ public :
     Nombre& operator/(Nombre& a);
     Nombre& neg();
     QString toString()const;
-
 };
 
 
@@ -141,7 +134,6 @@ class Complexe : public Nombre
 
 public :
     //constructeur
-    // ici l'upcast implicite fonctionne si on met direct un entier et un reel par exemple ? a try
     Complexe(Nombre& r,Nombre& i)
     {
         re=&r;
@@ -166,8 +158,6 @@ public :
     Nombre& operator$(Nombre& a);
     Nombre& neg();
     QString toString()const;
-
-    // creer un complexe avec l'operator $
 };
 
 

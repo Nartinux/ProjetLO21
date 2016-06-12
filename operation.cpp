@@ -814,8 +814,6 @@ void Egal::operation()
         Nombre* b1=dynamic_cast<Nombre*>(&v2);
         if(a1 && b1)
         {
-            Nombre* a;
-            Nombre* b;
             Entier* a2=dynamic_cast<Entier*>(a1);
             if(a2!=nullptr) {
                 Entier* b2=dynamic_cast<Entier*>(b1);
@@ -1016,8 +1014,6 @@ void SupOuEgal::operation()
         Nombre* b1=dynamic_cast<Nombre*>(&v2);
         if(a1 && b1)
         {
-            Nombre* a;
-            Nombre* b;
             Entier* a2=dynamic_cast<Entier*>(a1);
             if(a2!=nullptr) {
                 Entier* b2=dynamic_cast<Entier*>(b1);
@@ -1777,9 +1773,31 @@ void Undo::operation()
     expAff.setMessage("l'operation ne fonctionne pas");
 }
 
+
+// ------------------------------------------------------ CLASS Neg ------------------------------------------------------------------------
+
+Neg::~Neg(){}
+
+void Neg::operation()
+{
+    if (expAff.taille()>0) 
+    {
+        ObjectPile& v=expAff.top();
+        expAff.pop();
+        Nombre* a1=dynamic_cast<Nombre*>(&v);
+        if(a1)
+        {
+            expAff.push(a1->neg());
+
+        }
+        else expAff.setMessage("seulement sur un nombre"); 
+    }
+    else expAff.setMessage("necessite 1 argument dans la pile"); 
+}
+
+
+
 // ------------------------------------------------------ CLASS FACTORYOPERATEUR ------------------------------------------------------------------------
-
-
 
 
 FactoryOperateur::~FactoryOperateur() {}
@@ -1901,6 +1919,10 @@ OperateurAvance* FactoryOperateur::ProductOP(QString s)
     else if (s=="UNDO")
     {
         return new Undo(pil);
+    }
+    else if (s=="NEG")
+    {
+        return new Neg(pil);
     }
     else return nullptr;
 }

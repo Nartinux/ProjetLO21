@@ -75,13 +75,13 @@ void Controleur::sentCommande(QString& s)
                 Nombre* a2=dynamic_cast<Nombre*>(&v2);
                 if(a1!=nullptr && a2!=nullptr)
                 {
-                    if (s=="+") {Nombre* b1=&(a1->operator+(*a2)); expAff.push(*b1); LibMemory::freeMem(a1); LibMemory::freeMem(a2);}
-                    if (s=="-") {expAff.push(a1->operator-(*a2)); LibMemory::freeMem(a1); LibMemory::freeMem(a2);}
-                    if (s=="*") {expAff.push(a1->operator*(*a2)); LibMemory::freeMem(a1); LibMemory::freeMem(a2);}
+                    if (s=="+") expAff.push(a1->operator+(*a2));
+                    if (s=="-") expAff.push(a1->operator-(*a2));
+                    if (s=="*") expAff.push(a1->operator*(*a2));
                     if (s=="/")
                     {
                         Entier* ent=dynamic_cast<Entier*>(a2);
-                        if (ent==nullptr || ent->getInt()!=0) {expAff.push(a1->operator/(*a2));} //LibMemory::freeMem(a1); LibMemory::freeMem(a2);
+                        if (ent==nullptr || ent->getInt()!=0) {expAff.push(a1->operator/(*a2));}
                         else
                         {
                             expAff.push(*a1);
@@ -89,7 +89,7 @@ void Controleur::sentCommande(QString& s)
                             expAff.setMessage("Erreur : division par zéro");
                         }
                     }
-                    if (s=="$") {expAff.push(a1->operator$(*a2));} //LibMemory::freeMem(&v1); LibMemory::freeMem(&v2);
+                    if (s=="$") {expAff.push(a1->operator$(*a2));}
                 }
                 else
                 {
